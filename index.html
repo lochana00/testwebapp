@@ -798,23 +798,29 @@
 
                             <!-- Ticket Barcode Footer -->
                             <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-[11px] font-mono text-stone-400">
-                                <span id="ticketTimestampLabel">PASS ID: #CH1-VIP</span>
-                                <span>████ █ ███ ██ ████</span>
-                                <span>★★★★★ 10/10</span>
+                                <span id="ticketTimestampLabel">ISSUED FOR: CHAPTER 01</span>
+                                <span class="tracking-widest">||| || |||| | ||| ||||</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Primary Action Buttons: Excel Download (.xlsx) + Copy Summary -->
+                    <!-- Primary Action Buttons: WhatsApp + Copy Reply + Excel Download (.xlsx) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                        <button onclick="downloadSingleTicketExcel()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-5 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 text-sm cursor-pointer">
-                            <span>📊</span>
-                            <span>Save Output in Excel (.xlsx)</span>
+                        <button onclick="sendReplyViaWhatsApp()" class="w-full bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-bold py-4 px-5 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 text-sm cursor-pointer">
+                            <span class="text-base">💬</span>
+                            <span>Send Reply on WhatsApp</span>
                         </button>
 
                         <button onclick="copySummaryToClipboard()" class="w-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white font-bold py-4 px-5 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 text-sm cursor-pointer">
                             <span>📋</span>
                             <span id="copyBtnText">Copy Reply to Send Him</span>
+                        </button>
+                    </div>
+
+                    <div class="mb-3">
+                        <button onclick="downloadSingleTicketExcel()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 px-5 rounded-2xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer">
+                            <span>📊</span>
+                            <span>Save Output in Excel (.xlsx)</span>
                         </button>
                     </div>
 
@@ -851,18 +857,22 @@
 
     <!-- Copy Confirmation Modal (No native alert() used!) -->
     <div id="copyModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-rose-200 text-center transform transition-all">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-rose-200 text-center transform transition-all relative">
+            <button onclick="closeCopyModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 w-8 h-8 flex items-center justify-center rounded-full hover:bg-stone-100 transition-colors text-lg cursor-pointer" title="Close">✕</button>
             <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-3xl mx-auto mb-3">
                 💌
             </div>
             <h3 class="font-serif text-2xl font-bold text-stone-900 mb-1">Copied to Clipboard!</h3>
             <p class="text-xs sm:text-sm text-stone-600 mb-4">
-                Your meetup ticket details are copied! You can also download the Excel (`.xlsx`) file or paste this directly into chat:
+                Your meetup ticket details are copied! Send it straight to him on WhatsApp with one tap below or paste it into chat:
             </p>
-            <pre id="copiedPreviewText" class="text-left text-xs font-mono bg-stone-50 border border-stone-200 rounded-2xl p-3.5 text-stone-700 whitespace-pre-wrap mb-5 overflow-x-auto"></pre>
-            <button onclick="closeCopyModal()" class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold py-3 rounded-xl text-sm transition-all cursor-pointer">
-                Got it! See you soon ✨
-            </button>
+            <pre id="copiedPreviewText" class="text-left text-xs font-mono bg-stone-50 border border-stone-200 rounded-2xl p-3.5 text-stone-700 whitespace-pre-wrap mb-4 overflow-x-auto"></pre>
+            <div class="flex flex-col gap-2.5">
+                <button onclick="sendReplyViaWhatsApp()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3.5 rounded-xl text-sm shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                    <span>💬</span>
+                    <span>Open WhatsApp & Send to Him ↗</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -947,10 +957,10 @@
                                         <input id="selectAllRowsCheckbox" type="checkbox" onchange="toggleSelectAllExcelRows(this.checked)" title="Select All Rows" class="w-3.5 h-3.5 accent-rose-600 rounded cursor-pointer">
                                     </th>
                                     <th class="py-2.5 px-3">Date / Time</th>
-                                    <th class="py-2.5 px-3">Meetup Time</th>
+                                    <th class="py-2.5 px-3">Showtime</th>
                                     <th class="py-2.5 px-3">Color</th>
                                     <th class="py-2.5 px-3">Revealed Cafe</th>
-                                    <th class="py-2.5 px-3">Book/Movie Topic</th>
+                                    <th class="py-2.5 px-3">Table Topic</th>
                                     <th class="py-2.5 px-3">Treat Mood</th>
                                     <th class="py-2.5 px-3">Her Note</th>
                                     <th class="py-2.5 px-3 text-right">Action</th>
@@ -958,27 +968,29 @@
                             </thead>
                             <tbody id="excelLogTableBody" class="divide-y divide-stone-100 text-stone-700">
                                 <tr>
-                                    <td colspan="9" class="py-6 text-center text-stone-400 italic">No responses recorded yet. Complete Step 3 to log a response!</td>
+                                    <td colspan="9" class="py-6 text-center text-stone-400 italic">No responses logged in this session yet. Complete Step 3 to test!</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- GitHub Pages Auto-Webhook / Google Sheets Bridge (Optional for static hosting) -->
+                <!-- Optional WhatsApp Direct Reply Bridge -->
                 <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4">
-                    <div class="font-bold text-xs text-stone-800 mb-1 flex items-center gap-1.5">
-                        <span>🔗</span>
-                        <span>Optional: GitHub Pages Remote Excel / Google Sheets Webhook URL</span>
-                    </div>
-                    <p class="text-[11px] text-stone-600 mb-2.5 leading-relaxed">
-                        When she opens your GitHub Pages link on her phone, she can click <strong>"Save Output in Excel (.xlsx)"</strong> directly, and her response is also synced here. If you also want her choices silently sent to a personal Google Sheet / Formspree / Make webhook, paste the URL below:
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-2">
-                        <input id="webhookUrlInput" type="url" placeholder="https://script.google.com/macros/s/.../exec or https://formspree.io/f/..." class="flex-1 px-3 py-2 rounded-xl bg-white border border-stone-300 text-xs font-mono text-stone-800">
-                        <button onclick="saveWebhookUrl()" class="bg-stone-800 hover:bg-stone-700 text-white font-mono text-xs font-bold px-4 py-2 rounded-xl cursor-pointer shrink-0">
-                            Save Webhook
-                        </button>
+                    <div>
+                        <div class="font-bold text-xs text-stone-800 mb-1 flex items-center gap-1.5">
+                            <span>💬</span>
+                            <span>Optional: Your WhatsApp Number (for Direct 1-Tap Reply)</span>
+                        </div>
+                        <p class="text-[11px] text-stone-600 mb-2 leading-relaxed">
+                            Enter your WhatsApp number with country code (digits only, e.g., <code>94771234567</code>) so her <strong>"Send Reply on WhatsApp"</strong> button opens a direct chat with you. Tip for GitHub Pages: you can also share your link as <code>?phone=94771234567</code>!
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input id="whatsappNumberInput" type="tel" placeholder="e.g. 94771234567 (Country code + number, no + or spaces)" class="flex-1 px-3 py-2 rounded-xl bg-white border border-stone-300 text-xs font-mono text-stone-800">
+                            <button onclick="saveWhatsappNumber()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs font-bold px-4 py-2 rounded-xl cursor-pointer shrink-0 transition-all active:scale-95">
+                                Save WhatsApp #
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1109,13 +1121,57 @@
             activeTrackIndex: 0,
             musicVolume: 0.65,
             rainVinylEnabled: true,
-            webhookUrl: '',
+            hostWhatsappNumber: '',
             savedResponses: [],
             selectedRowIds: new Set(),
             deletedRowIds: new Set(),
             lastDeletedBackup: null,
             undoToastTimer: null
         };
+
+        /**************************************************************
+         * 1B. TACTILE HAPTIC FEEDBACK ENGINE
+         * Uses navigator.vibrate patterns on supported mobile devices
+         * + subtle low-frequency sub-bass thump for tactile feel on iOS/desktop
+         **************************************************************/
+        const HAPTIC_PATTERNS = {
+            light: [14],
+            medium: [25],
+            pageTurn: [12, 35, 22],
+            dodge: [28, 30, 45],
+            heartbeat: [35, 55, 75, 50, 35],
+            success: [20, 45, 55],
+            delete: [40, 35, 25]
+        };
+
+        function triggerHaptic(patternName = 'light') {
+            const pattern = HAPTIC_PATTERNS[patternName] || HAPTIC_PATTERNS.light;
+            try {
+                if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+                    navigator.vibrate(pattern);
+                }
+            } catch (e) {}
+
+            // Subtle tactile sub-bass pulse via Web Audio for devices without vibration motors
+            if (audioCtx && audioCtx.state === 'running') {
+                try {
+                    const now = audioCtx.currentTime;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(patternName === 'heartbeat' ? 95 : 115, now);
+                    osc.frequency.exponentialRampToValueAtTime(42, now + 0.045);
+
+                    gain.gain.setValueAtTime(0.045, now);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.055);
+                } catch (e) {}
+            }
+        }
 
         // Secret Location Vault (Constructed dynamically when a color is clicked)
         const SECRET_PLACES = {
@@ -1605,6 +1661,7 @@
 
         // Realistic Tactile Foley Sound Effects (Paper Page Turn, Coffee Cup Clink, Ticket Punch)
         function playPageTurnSound() {
+            triggerHaptic('pageTurn');
             initAudioContext();
             if (!audioCtx) return;
             try {
@@ -1632,6 +1689,7 @@
         }
 
         function playClickBoop(pitch = 620) {
+            triggerHaptic('light');
             initAudioContext();
             if (!audioCtx) return;
             try {
@@ -1653,6 +1711,7 @@
         }
 
         function playDodgeBoing() {
+            triggerHaptic('dodge');
             initAudioContext();
             if (!audioCtx) return;
             try {
@@ -1674,6 +1733,7 @@
         }
 
         function playSecretRevealFanfare(color) {
+            triggerHaptic('heartbeat');
             initAudioContext();
             if (!audioCtx) return;
             try {
@@ -2046,7 +2106,10 @@
             }
 
             const nowStr = new Date().toLocaleString();
-            document.getElementById('ticketTimestampLabel').textContent = `LOGGED: ${nowStr}`;
+            const timestampEl = document.getElementById('ticketTimestampLabel');
+            if (timestampEl) {
+                timestampEl.textContent = `LOGGED: ${nowStr}`;
+            }
 
             const generatedLocalId = 'local_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
 
@@ -2078,17 +2141,6 @@
                     newRecord.localId = cloudDocId;
                     renderExcelLogTable();
                 }
-            }
-
-            // Optional Webhook POST if configured by host
-            if (appState.webhookUrl) {
-                try {
-                    fetch(appState.webhookUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(newRecord)
-                    }).catch(() => {});
-                } catch (e) {}
             }
 
             goToStep(4);
@@ -2269,6 +2321,7 @@
 
         // Per-Row Delete Button Handler
         function deleteSingleExcelRow(rowId) {
+            triggerHaptic('delete');
             playClickBoop(520);
             const targetIndex = appState.savedResponses.findIndex((r, i) => getRecordId(r, i) === rowId);
             if (targetIndex === -1) return;
@@ -2529,11 +2582,18 @@
             modal.classList.remove('flex');
         }
 
-        function saveWebhookUrl() {
-            const input = document.getElementById('webhookUrlInput');
-            appState.webhookUrl = input ? input.value.trim() : '';
-            playClickBoop(800);
-            showToast("🔗 Webhook URL saved for automatic forwarding!", "✅");
+        function saveWhatsappNumber() {
+            const input = document.getElementById('whatsappNumberInput');
+            const cleaned = input ? input.value.replace(/[^\d]/g, '') : '';
+            appState.hostWhatsappNumber = cleaned;
+            if (input) input.value = cleaned;
+            triggerHaptic('success');
+            playClickBoop(820);
+            if (cleaned) {
+                showToast(`💬 WhatsApp number (+${cleaned}) saved for 1-tap replies!`, "✅");
+            } else {
+                showToast("💬 WhatsApp set to general contact picker mode!", "📱");
+            }
         }
 
         function celebrateAgain() {
@@ -2542,9 +2602,8 @@
             showToast("🎉 Standing ovation from the audience!", "🍿");
         }
 
-        // Copy Formatted Summary to Clipboard
-        function copySummaryToClipboard() {
-            playClickBoop(880);
+        // Build the Formatted Meetup Ticket Summary Text (shared by Clipboard Copy & WhatsApp)
+        function buildTicketSummaryText() {
             const place = SECRET_PLACES[appState.selectedColor || 'red'];
             const chosenIndices = Array.from(appState.selectedVibes);
             const vibesText = chosenIndices.length > 0
@@ -2552,25 +2611,27 @@
                 : "Just vibe, laugh & enjoy Chapter 1 ✨";
 
             const summaryLines = [
-                `🎬 CHAPTER 1: OUR FIRST MEETUP TICKET 📖`,
-                `• Showtime: ${appState.selectedTime || '9:00 AM'} (${appState.selectedTimeTitle || 'Morning Cut'})`,
-                `• Chosen Color: ${place.colorLabel}`,
-                `• Secret Cafe: ${place.name}`,
-                `• Google Maps: ${place.url}`,
-                `• Table Topic: ${appState.selectedTopic}`,
-                `• Treat Mood: ${appState.selectedTreat}`,
-                `• Side Quests: ${vibesText}`
+                `🎬 *CHAPTER 1: OUR FIRST MEETUP TICKET* 📖`,
+                `⏰ *Showtime:* ${appState.selectedTime || '9:00 AM'} (${appState.selectedTimeTitle || 'Morning Cut'})`,
+                `🎨 *Chosen Color:* ${place.colorLabel}`,
+                `☕ *Secret Cafe:* ${place.name}`,
+                `📍 *Google Maps:* ${place.url}`,
+                `📚 *Table Topic:* ${appState.selectedTopic}`,
+                `🍰 *Treat Mood:* ${appState.selectedTreat}`,
+                `✨ *Side Quests:* ${vibesText}`
             ];
 
             if (appState.customNote) {
-                summaryLines.push(`• Her Note: "${appState.customNote}"`);
+                summaryLines.push(`💌 *My Note:* "${appState.customNote}"`);
             }
-            summaryLines.push(`✨ See you there!`);
+            summaryLines.push(`💕 *See you there for Chapter 1!*`);
 
-            const fullText = summaryLines.join('\n');
+            return summaryLines.join('\n');
+        }
 
+        function copyTextSilently(text) {
             const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = fullText;
+            tempTextArea.value = text;
             tempTextArea.style.position = 'fixed';
             tempTextArea.style.left = '-9999px';
             document.body.appendChild(tempTextArea);
@@ -2579,12 +2640,37 @@
                 document.execCommand('copy');
             } catch (err) {}
             document.body.removeChild(tempTextArea);
+        }
+
+        // Copy Formatted Summary to Clipboard & Open Modal (with WhatsApp Quick-Send button)
+        function copySummaryToClipboard() {
+            triggerHaptic('success');
+            playClickBoop(880);
+            const fullText = buildTicketSummaryText();
+            copyTextSilently(fullText);
 
             document.getElementById('copiedPreviewText').textContent = fullText;
             const modal = document.getElementById('copyModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             fireConfetti(['#10B981', '#F59E0B', '#F43F5E']);
+        }
+
+        // Send Reply Directly via WhatsApp (Also copies to clipboard as backup)
+        function sendReplyViaWhatsApp() {
+            triggerHaptic('heartbeat');
+            playClickBoop(920);
+            const fullText = buildTicketSummaryText();
+            copyTextSilently(fullText);
+
+            const encodedText = encodeURIComponent(fullText);
+            const cleanPhone = (appState.hostWhatsappNumber || '').replace(/[^\d]/g, '');
+            const whatsappUrl = cleanPhone
+                ? `https://wa.me/${cleanPhone}?text=${encodedText}`
+                : `https://wa.me/?text=${encodedText}`;
+
+            showToast("💬 Opening WhatsApp with your meetup ticket ready to send!", "💌");
+            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
         }
 
         function closeCopyModal() {
@@ -2698,6 +2784,26 @@
             resizeCanvases();
             initAmbientParticles();
             animateCanvases();
+
+            // Support ?phone=94771234567 in the GitHub Pages URL for instant 1-tap WhatsApp direct reply
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const phoneParam = urlParams.get('phone') || urlParams.get('whatsapp') || '';
+                if (phoneParam) {
+                    const cleaned = phoneParam.replace(/[^\d]/g, '');
+                    appState.hostWhatsappNumber = cleaned;
+                    const input = document.getElementById('whatsappNumberInput');
+                    if (input) input.value = cleaned;
+                }
+            } catch (e) {}
+
+            // Attach universal tactile haptic feedback to all interactive buttons & links
+            document.addEventListener('pointerdown', (e) => {
+                const interactive = e.target.closest('button, a');
+                if (interactive && !interactive.disabled) {
+                    triggerHaptic('light');
+                }
+            }, { passive: true });
         };
     </script>
 </body>
