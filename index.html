@@ -266,41 +266,36 @@
                 </div>
             </div>
 
-            <!-- Collapsible Soundtrack Player Drawer (Kept mounted in DOM so YouTube IFrame never gets blocked by display:none) -->
+            <!-- Collapsible Spotify Soundtrack Player Drawer (Kept mounted in DOM for smooth Spotify Embed playback) -->
             <div id="musicMixerPanel" class="max-h-0 opacity-0 pointer-events-none overflow-hidden bg-white/95 backdrop-blur-xl border border-amber-200/0 rounded-2xl px-3.5 py-0 shadow-xl text-xs transition-all duration-300">
                 <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-stone-100">
                     <div class="flex items-center gap-2">
-                        <span class="text-lg">🎹</span>
+                        <span class="text-lg">💚</span>
                         <div>
-                            <div class="font-bold text-stone-800" id="activeTrackTitle">Our Piano Soundtrack ✨</div>
-                            <div class="text-[10px] font-mono text-stone-400" id="activeTrackEngine">youtu.be/QZ41RzuYsWU • Always-On Piano Theme</div>
+                            <div class="font-bold text-stone-800" id="activeTrackTitle">Our Spotify Soundtrack ✨</div>
+                            <div class="text-[10px] font-mono text-stone-400" id="activeTrackEngine">Spotify Track • Commercial-Free BGM</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <a href="https://youtu.be/QZ41RzuYsWU?si=5BD1TyOTbFm0NVWA" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50/80 text-rose-800 font-mono text-[10px] font-bold hover:bg-rose-100 transition-colors">
-                            ▶️ Open YouTube ↗
+                        <a href="https://open.spotify.com/track/3qrOABQceslBAqz3vbDa0E?si=dcaabc3d369a43d3" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg border border-emerald-200 bg-emerald-50/90 text-emerald-800 font-mono text-[10px] font-bold hover:bg-emerald-100 transition-colors">
+                            🎵 Open in Spotify ↗
                         </a>
                     </div>
                 </div>
 
-                <!-- Embedded YouTube Stream Container (Proper dimensions so mobile & desktop browsers allow audio playback) -->
-                <div class="mb-3 rounded-xl overflow-hidden border border-stone-200 bg-stone-950/90 flex items-center justify-between p-1.5 gap-2.5">
-                    <div class="w-36 h-20 rounded-lg overflow-hidden shrink-0 bg-black relative">
-                        <div id="ytMusicPlayerContainer" class="w-full h-full"></div>
-                    </div>
-                    <div class="flex-1 text-left pr-1">
-                        <div class="text-[11px] font-bold text-white mb-0.5">Romantic Solo Piano Theme</div>
-                        <div class="text-[10px] font-mono text-amber-300 mb-1.5" id="musicSourceStatusLabel">● Ready to Play on First Click</div>
-                        <p class="text-[10px] text-stone-300 leading-tight">
-                            Plays directly from YouTube (<code class="text-rose-300">QZ41RzuYsWU</code>) + synchronized Grand Piano arrangement.
-                        </p>
+                <!-- Embedded Spotify Track Player Container (Zero YouTube Commercials) -->
+                <div class="mb-2.5 rounded-xl overflow-hidden border border-stone-200 bg-stone-950 p-1.5">
+                    <div id="spotifyMusicPlayerContainer" class="w-full min-h-[80px] rounded-xl overflow-hidden"></div>
+                    <div class="flex items-center justify-between px-1.5 pt-1.5 pb-0.5 text-[10px] font-mono">
+                        <span class="text-emerald-400" id="musicSourceStatusLabel">● Ready to Play on First Click</span>
+                        <span class="text-stone-400">Zero Commercials ✨</span>
                     </div>
                 </div>
 
-                <!-- Volume Slider -->
+                <!-- Volume Slider (Applies to Grand Piano & Local MP3 Fallback) -->
                 <div class="flex items-center gap-3">
                     <span class="text-stone-500 font-mono text-[10px] uppercase">Volume</span>
-                    <input id="musicVolumeSlider" type="range" min="0" max="100" value="75" oninput="changeMusicVolume(this.value)" class="flex-1 accent-rose-500 h-1.5 bg-stone-200 rounded-lg cursor-pointer">
+                    <input id="musicVolumeSlider" type="range" min="0" max="100" value="75" oninput="changeMusicVolume(this.value)" class="flex-1 accent-emerald-500 h-1.5 bg-stone-200 rounded-lg cursor-pointer">
                     <span id="musicVolumeLabel" class="text-stone-600 font-mono text-[10px] w-8 text-right">75%</span>
                 </div>
             </div>
@@ -1252,112 +1247,107 @@
         ];
 
         /**************************************************************
-         * 2. DEDICATED BACKGROUND MUSIC ENGINE FOR:
-         * https://youtu.be/QZ41RzuYsWU?si=5BD1TyOTbFm0NVWA
-         * - Plays the exact YouTube video (QZ41RzuYsWU) when she clicks the first button
+         * 2. COMMERCIAL-FREE SPOTIFY BACKGROUND MUSIC ENGINE FOR:
+         * https://open.spotify.com/track/3qrOABQceslBAqz3vbDa0E?si=dcaabc3d369a43d3
+         * - Uses the official Spotify Embed IFrame API (zero YouTube ads!)
          * - Supports ./music.mp3 if uploaded to the GitHub repository
-         * - Includes a note-for-note Ab Major Concert Grand Piano transcription of
-         *   the uploaded reference audio so the exact song ALWAYS plays immediately
+         * - Includes a note-for-note Ab Major Concert Grand Piano arrangement
+         *   as an instant, ad-free companion when browsers gate Spotify autoplay
          **************************************************************/
-        const YOUTUBE_REF_VIDEO_ID = 'QZ41RzuYsWU';
-        const YOUTUBE_REF_FULL_URL = 'https://youtu.be/QZ41RzuYsWU?si=5BD1TyOTbFm0NVWA';
-        let ytPlayer = null;
-        let ytPlayerReady = false;
-        let ytIsActivelyStreaming = false;
-        let pendingYtPlay = false;
+        const SPOTIFY_TRACK_ID = '3qrOABQceslBAqz3vbDa0E';
+        const SPOTIFY_TRACK_URI = `spotify:track:${SPOTIFY_TRACK_ID}`;
+        const SPOTIFY_TRACK_URL = 'https://open.spotify.com/track/3qrOABQceslBAqz3vbDa0E?si=dcaabc3d369a43d3';
+        let spotifyController = null;
+        let spotifyControllerReady = false;
+        let spotifyIsActivelyPlaying = false;
+        let pendingSpotifyPlay = false;
 
-        // Load official YouTube IFrame Player API asynchronously
-        (function loadYouTubeIframeAPI() {
-            if (window.YT && window.YT.Player) {
-                initYouTubePlayer();
-                return;
-            }
+        // Load official Spotify Embed IFrame API asynchronously
+        (function loadSpotifyIframeAPI() {
             const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
+            tag.src = 'https://open.spotify.com/embed/iframe-api/v1';
+            tag.async = true;
             const firstScriptTag = document.getElementsByTagName('script')[0];
             if (firstScriptTag && firstScriptTag.parentNode) {
                 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
             } else {
                 document.head.appendChild(tag);
             }
+
+            // Fallback to direct Spotify iframe if the API script is delayed or blocked
+            setTimeout(() => {
+                const container = document.getElementById('spotifyMusicPlayerContainer');
+                if (!spotifyController && container && container.children.length === 0) {
+                    container.innerHTML = `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/${SPOTIFY_TRACK_ID}?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
+                }
+            }, 3500);
         })();
 
-        window.onYouTubeIframeAPIReady = function() {
-            initYouTubePlayer();
-        };
+        window.onSpotifyIframeApiReady = function(IFrameAPI) {
+            const container = document.getElementById('spotifyMusicPlayerContainer');
+            if (!container || spotifyController) return;
+            container.innerHTML = '';
 
-        function initYouTubePlayer() {
-            if (ytPlayer || !window.YT || !window.YT.Player) return;
-            try {
-                const playerVars = {
-                    autoplay: 0,
-                    controls: 1,
-                    disablekb: 1,
-                    fs: 0,
-                    loop: 1,
-                    playlist: YOUTUBE_REF_VIDEO_ID,
-                    modestbranding: 1,
-                    playsinline: 1,
-                    rel: 0
-                };
-                if (window.location && window.location.origin && window.location.origin.startsWith('http')) {
-                    playerVars.origin = window.location.origin;
-                }
+            const options = {
+                uri: SPOTIFY_TRACK_URI,
+                width: '100%',
+                height: '80',
+                theme: 'dark'
+            };
 
-                ytPlayer = new YT.Player('ytMusicPlayerContainer', {
-                    height: '80',
-                    width: '144',
-                    videoId: YOUTUBE_REF_VIDEO_ID,
-                    playerVars: playerVars,
-                    events: {
-                        onReady: function(event) {
-                            ytPlayerReady = true;
-                            try {
-                                event.target.setVolume(Math.round(appState.musicVolume * 100));
-                                if (pendingYtPlay && appState.musicPlaying) {
-                                    pendingYtPlay = false;
-                                    event.target.unMute();
-                                    event.target.playVideo();
-                                }
-                            } catch (e) {}
-                        },
-                        onStateChange: function(event) {
-                            if (event.data === YT.PlayerState.PLAYING) {
-                                ytIsActivelyStreaming = true;
-                                updateMusicSourceLabel('● Streaming YouTube (QZ41RzuYsWU)');
-                                // Stop synthesized duplicate layer while YouTube stream is audibly playing
-                                if (bgMusicTimer) {
-                                    clearTimeout(bgMusicTimer);
-                                    bgMusicTimer = null;
-                                }
-                            } else if (event.data === YT.PlayerState.ENDED) {
-                                ytIsActivelyStreaming = false;
-                                if (appState.musicPlaying) {
-                                    try {
-                                        event.target.seekTo(0);
-                                        event.target.playVideo();
-                                    } catch (e) {
-                                        runUploadedSongPianoLoop();
-                                    }
-                                }
-                            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.CUED) {
-                                ytIsActivelyStreaming = false;
-                                if (appState.musicPlaying && !usingHtml5Audio && !bgMusicTimer) {
-                                    runUploadedSongPianoLoop();
-                                }
-                            }
-                        },
-                        onError: function() {
-                            ytIsActivelyStreaming = false;
-                            updateMusicSourceLabel('● Playing Reference Grand Piano Audio');
-                            if (appState.musicPlaying && !usingHtml5Audio && !bgMusicTimer) {
-                                runUploadedSongPianoLoop();
-                            }
+            IFrameAPI.createController(container, options, function(EmbedController) {
+                spotifyController = EmbedController;
+                spotifyControllerReady = true;
+
+                EmbedController.addListener('ready', () => {
+                    if (pendingSpotifyPlay && appState.musicPlaying) {
+                        pendingSpotifyPlay = false;
+                        try {
+                            EmbedController.play();
+                        } catch (e) {}
+                    }
+                });
+
+                EmbedController.addListener('playback_update', (e) => {
+                    if (!e || !e.data) return;
+                    const isPlayingNow = !e.data.isPaused && !e.data.isBuffering;
+
+                    if (isPlayingNow) {
+                        spotifyIsActivelyPlaying = true;
+                        // Stop synthesized piano & local MP3 while Spotify is actively playing to prevent overlap
+                        if (bgMusicTimer) {
+                            clearTimeout(bgMusicTimer);
+                            bgMusicTimer = null;
+                        }
+                        const audioEl = document.getElementById('bgAudioElement');
+                        if (audioEl && !audioEl.paused) {
+                            audioEl.pause();
+                            usingHtml5Audio = false;
+                        }
+                        if (!appState.musicPlaying) {
+                            appState.musicPlaying = true;
+                            updateMusicUI();
+                        }
+                        updateMusicSourceLabel('● Streaming Spotify (Ad-Free)');
+                    } else if (e.data.isPaused) {
+                        const wasSpotifyPlaying = spotifyIsActivelyPlaying;
+                        spotifyIsActivelyPlaying = false;
+                        // If BGM is still ON and Spotify paused/ended, smoothly carry on with ad-free Grand Piano
+                        if (appState.musicPlaying && wasSpotifyPlaying && !usingHtml5Audio && !bgMusicTimer) {
+                            updateMusicSourceLabel('● Playing Ad-Free Piano Theme');
+                            runUploadedSongPianoLoop();
                         }
                     }
                 });
-            } catch (e) {}
-        }
+
+                if (pendingSpotifyPlay && appState.musicPlaying) {
+                    pendingSpotifyPlay = false;
+                    try {
+                        EmbedController.play();
+                    } catch (e) {}
+                }
+            });
+        };
 
         function updateMusicSourceLabel(text) {
             const lbl = document.getElementById('musicSourceStatusLabel');
@@ -1673,45 +1663,46 @@
             } catch (e) {}
         }
 
-        // Always starts https://youtu.be/QZ41RzuYsWU?si=5BD1TyOTbFm0NVWA + exact uploaded piano audio
+        // Starts Spotify (3qrOABQceslBAqz3vbDa0E) + ad-free piano accompaniment with zero commercials
         function startBackgroundMusic() {
             initAudioContext();
             if (appState.musicPlaying) return;
             appState.musicPlaying = true;
             updateMusicUI();
 
-            // 1. Trigger the YouTube IFrame Player (QZ41RzuYsWU) directly inside the user click gesture
-            if (ytPlayerReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+            // 1. Trigger Spotify Embed Controller directly inside the user click gesture
+            if (spotifyControllerReady && spotifyController && typeof spotifyController.play === 'function') {
                 try {
-                    ytPlayer.unMute();
-                    ytPlayer.setVolume(Math.round(appState.musicVolume * 100));
-                    ytPlayer.playVideo();
+                    spotifyController.play();
                 } catch (e) {}
             } else {
-                pendingYtPlay = true;
-                initYouTubePlayer();
+                pendingSpotifyPlay = true;
             }
 
-            // 2. Check if user placed the uploaded file as ./music.mp3 in their GitHub repo
+            // 2. Check if user placed the uploaded MP3 as ./music.mp3 in their GitHub repo
             const audioEl = document.getElementById('bgAudioElement');
             if (audioEl) {
                 audioEl.volume = appState.musicVolume;
                 audioEl.play().then(() => {
-                    usingHtml5Audio = true;
-                    updateMusicSourceLabel('● Playing Uploaded Reference Audio (./music.mp3)');
-                    if (bgMusicTimer) {
-                        clearTimeout(bgMusicTimer);
-                        bgMusicTimer = null;
+                    if (!spotifyIsActivelyPlaying) {
+                        usingHtml5Audio = true;
+                        updateMusicSourceLabel('● Playing Local Audio (./music.mp3)');
+                        if (bgMusicTimer) {
+                            clearTimeout(bgMusicTimer);
+                            bgMusicTimer = null;
+                        }
+                    } else {
+                        audioEl.pause();
                     }
                 }).catch(() => {
                     usingHtml5Audio = false;
                 });
             }
 
-            // 3. Immediately start the exact note-for-note piano performance of the uploaded audio
-            // (If YouTube enters PLAYING state or ./music.mp3 loads, this automatically yields so there is never double audio!)
-            if (!ytIsActivelyStreaming && !usingHtml5Audio) {
-                updateMusicSourceLabel('● Playing Reference Piano Theme (QZ41RzuYsWU)');
+            // 3. Immediately start the ad-free Concert Grand Piano arrangement
+            // (Automatically yields the instant Spotify starts streaming so there is never double audio!)
+            if (!spotifyIsActivelyPlaying && !usingHtml5Audio) {
+                updateMusicSourceLabel('● Playing Ad-Free Piano • Tap 🎛️ for Spotify');
                 runUploadedSongPianoLoop();
             }
         }
@@ -1720,7 +1711,7 @@
             if (bgMusicTimer) clearTimeout(bgMusicTimer);
 
             const playNextStep = () => {
-                if (!appState.musicPlaying || ytIsActivelyStreaming || usingHtml5Audio) return;
+                if (!appState.musicPlaying || spotifyIsActivelyPlaying || usingHtml5Audio) return;
 
                 const stepData = UPLOADED_REFERENCE_PIANO_SCORE[melodyStep % UPLOADED_REFERENCE_PIANO_SCORE.length];
                 const durSec = Math.max(0.6, (stepData.ms / 1000) * 1.45);
@@ -1729,7 +1720,7 @@
                 if (stepData.chord) {
                     stepData.chord.forEach((freq, idx) => {
                         setTimeout(() => {
-                            if (appState.musicPlaying && !ytIsActivelyStreaming && !usingHtml5Audio) {
+                            if (appState.musicPlaying && !spotifyIsActivelyPlaying && !usingHtml5Audio) {
                                 playRealisticPianoNote(freq, durSec * 1.35, 0.048);
                             }
                         }, idx * 24);
@@ -1750,15 +1741,15 @@
 
         function stopBackgroundMusic() {
             appState.musicPlaying = false;
-            pendingYtPlay = false;
-            ytIsActivelyStreaming = false;
+            pendingSpotifyPlay = false;
+            spotifyIsActivelyPlaying = false;
             if (bgMusicTimer) {
                 clearTimeout(bgMusicTimer);
                 bgMusicTimer = null;
             }
-            if (ytPlayerReady && ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+            if (spotifyControllerReady && spotifyController && typeof spotifyController.pause === 'function') {
                 try {
-                    ytPlayer.pauseVideo();
+                    spotifyController.pause();
                 } catch (e) {}
             }
             const audioEl = document.getElementById('bgAudioElement');
@@ -1776,7 +1767,7 @@
                 showToast("🔇 Soundtrack paused. Tap again anytime to resume our song!", "📖");
             } else {
                 startBackgroundMusic();
-                showToast("🎶 Playing our piano soundtrack (youtu.be/QZ41RzuYsWU) ✨", "🎹");
+                showToast("💚 Playing our ad-free Spotify & Piano soundtrack ✨", "🎵");
             }
         }
 
@@ -1801,11 +1792,6 @@
             if (masterMusicGain && audioCtx) {
                 masterMusicGain.gain.setValueAtTime(norm, audioCtx.currentTime);
             }
-            if (ytPlayerReady && ytPlayer && typeof ytPlayer.setVolume === 'function') {
-                try {
-                    ytPlayer.setVolume(Math.round(norm * 100));
-                } catch (e) {}
-            }
             const audioEl = document.getElementById('bgAudioElement');
             if (audioEl) {
                 audioEl.volume = norm;
@@ -1819,7 +1805,7 @@
             const eq = document.getElementById('musicEqBars');
             if (appState.musicPlaying) {
                 vinyl.classList.remove('spin-paused');
-                text.textContent = 'Our Song ♪';
+                text.textContent = spotifyIsActivelyPlaying ? 'Spotify ♪' : 'Our Song ♪';
                 btn.classList.add('bg-rose-50', 'border-rose-300');
                 if (eq) {
                     eq.classList.remove('hidden');
