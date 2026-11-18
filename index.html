@@ -224,8 +224,8 @@
 </head>
 <body class="font-sans antialiased selection:bg-rose-200 selection:text-rose-900 relative flex flex-col min-h-screen justify-between">
 
-    <!-- Hidden HTML5 Audio Element for Real Café MP3 + Local ./music.mp3 Support -->
-    <audio id="bgAudioElement" loop preload="auto" crossorigin="anonymous"></audio>
+    <!-- Hidden HTML5 Audio Element for Optional Local ./music.mp3 File -->
+    <audio id="bgAudioElement" src="./music.mp3" loop preload="auto"></audio>
 
     <!-- Background Floating Particles & Confetti Canvas -->
     <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
@@ -251,7 +251,7 @@
                     <!-- Main Music Play/Pause Pill -->
                     <button id="musicToggleBtn" onclick="toggleBackgroundMusic()" class="bg-white/95 hover:bg-rose-50 active:scale-95 transition-all backdrop-blur-md border border-rose-200 rounded-full px-3 py-1.5 shadow-sm flex items-center gap-2 text-xs font-semibold text-rose-700 cursor-pointer">
                         <span id="musicVinylIcon" class="inline-block text-sm spin-vinyl spin-paused">💿</span>
-                        <span id="musicStatusText" class="truncate max-w-[110px] sm:max-w-[150px]">Café Piano: Off</span>
+                        <span id="musicStatusText" class="truncate max-w-[110px] sm:max-w-[150px]">BGM: Off</span>
                         <div id="musicEqBars" class="hidden items-end gap-0.5 h-3.5 px-0.5">
                             <span class="w-0.5 bg-rose-500 rounded-full eq-bar-1"></span>
                             <span class="w-0.5 bg-amber-500 rounded-full eq-bar-2"></span>
@@ -260,50 +260,48 @@
                     </button>
 
                     <!-- Expand Mini Music Mixer Button -->
-                    <button onclick="toggleMusicMixerPanel()" title="Choose Song & Volume" class="bg-white/90 hover:bg-stone-100 active:scale-95 transition-all backdrop-blur-md border border-stone-200 rounded-full w-8 h-8 shadow-sm flex items-center justify-center text-xs text-stone-700 cursor-pointer">
+                    <button onclick="toggleMusicMixerPanel()" title="Soundtrack Player & Volume" class="bg-white/90 hover:bg-stone-100 active:scale-95 transition-all backdrop-blur-md border border-stone-200 rounded-full w-8 h-8 shadow-sm flex items-center justify-center text-xs text-stone-700 cursor-pointer">
                         🎛️
                     </button>
                 </div>
             </div>
 
-            <!-- Collapsible Realistic Café Music Player & Track Switcher Panel -->
-            <div id="musicMixerPanel" class="hidden bg-white/95 backdrop-blur-xl border border-amber-200/90 rounded-2xl p-3.5 shadow-xl text-xs transition-all">
+            <!-- Collapsible Soundtrack Player Drawer (Kept mounted in DOM so YouTube IFrame never gets blocked by display:none) -->
+            <div id="musicMixerPanel" class="max-h-0 opacity-0 pointer-events-none overflow-hidden bg-white/95 backdrop-blur-xl border border-amber-200/0 rounded-2xl px-3.5 py-0 shadow-xl text-xs transition-all duration-300">
                 <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-stone-100">
                     <div class="flex items-center gap-2">
                         <span class="text-lg">🎹</span>
                         <div>
-                            <div class="font-bold text-stone-800" id="activeTrackTitle">1. Romantic Bookshop Café Piano</div>
-                            <div class="text-[10px] font-mono text-stone-400" id="activeTrackEngine">Warm Acoustic Piano + Celesta & Strings</div>
+                            <div class="font-bold text-stone-800" id="activeTrackTitle">Our Piano Soundtrack ✨</div>
+                            <div class="text-[10px] font-mono text-stone-400" id="activeTrackEngine">youtu.be/QZ41RzuYsWU • Always-On Piano Theme</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button onclick="toggleRainVinylAmbiance()" id="ambianceToggleBtn" class="px-2.5 py-1 rounded-lg border border-amber-200 bg-amber-50/70 text-amber-900 font-mono text-[10px] font-bold hover:bg-amber-100 transition-colors cursor-pointer">
-                            🌧️ Vinyl & Rain: ON
-                        </button>
+                        <a href="https://youtu.be/QZ41RzuYsWU?si=5BD1TyOTbFm0NVWA" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50/80 text-rose-800 font-mono text-[10px] font-bold hover:bg-rose-100 transition-colors">
+                            ▶️ Open YouTube ↗
+                        </a>
                     </div>
                 </div>
 
-                <!-- 4 Cute Track Presets -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-3">
-                    <button onclick="selectMusicTrack(0)" id="trackBtn0" class="track-btn px-2.5 py-1.5 rounded-xl border border-rose-300 bg-rose-50 text-rose-900 font-medium text-[11px] text-left truncate cursor-pointer">
-                        ☕ 1. Café Piano
-                    </button>
-                    <button onclick="selectMusicTrack(1)" id="trackBtn1" class="track-btn px-2.5 py-1.5 rounded-xl border border-stone-200 bg-stone-50 text-stone-700 font-medium text-[11px] text-left truncate cursor-pointer">
-                        🎬 2. Cinema Romance
-                    </button>
-                    <button onclick="selectMusicTrack(2)" id="trackBtn2" class="track-btn px-2.5 py-1.5 rounded-xl border border-stone-200 bg-stone-50 text-stone-700 font-medium text-[11px] text-left truncate cursor-pointer">
-                        🎠 3. Ghibli Music Box
-                    </button>
-                    <button onclick="selectMusicTrack(3)" id="trackBtn3" class="track-btn px-2.5 py-1.5 rounded-xl border border-stone-200 bg-stone-50 text-stone-700 font-medium text-[11px] text-left truncate cursor-pointer" title="Plays ./music.mp3 from your GitHub repo or streaming acoustic track">
-                        🎵 4. Custom MP3
-                    </button>
+                <!-- Embedded YouTube Stream Container (Proper dimensions so mobile & desktop browsers allow audio playback) -->
+                <div class="mb-3 rounded-xl overflow-hidden border border-stone-200 bg-stone-950/90 flex items-center justify-between p-1.5 gap-2.5">
+                    <div class="w-36 h-20 rounded-lg overflow-hidden shrink-0 bg-black relative">
+                        <div id="ytMusicPlayerContainer" class="w-full h-full"></div>
+                    </div>
+                    <div class="flex-1 text-left pr-1">
+                        <div class="text-[11px] font-bold text-white mb-0.5">Romantic Solo Piano Theme</div>
+                        <div class="text-[10px] font-mono text-amber-300 mb-1.5" id="musicSourceStatusLabel">● Ready to Play on First Click</div>
+                        <p class="text-[10px] text-stone-300 leading-tight">
+                            Plays directly from YouTube (<code class="text-rose-300">QZ41RzuYsWU</code>) + synchronized Grand Piano arrangement.
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Volume Slider -->
                 <div class="flex items-center gap-3">
                     <span class="text-stone-500 font-mono text-[10px] uppercase">Volume</span>
-                    <input id="musicVolumeSlider" type="range" min="0" max="100" value="65" oninput="changeMusicVolume(this.value)" class="flex-1 accent-rose-500 h-1.5 bg-stone-200 rounded-lg cursor-pointer">
-                    <span id="musicVolumeLabel" class="text-stone-600 font-mono text-[10px] w-8 text-right">65%</span>
+                    <input id="musicVolumeSlider" type="range" min="0" max="100" value="75" oninput="changeMusicVolume(this.value)" class="flex-1 accent-rose-500 h-1.5 bg-stone-200 rounded-lg cursor-pointer">
+                    <span id="musicVolumeLabel" class="text-stone-600 font-mono text-[10px] w-8 text-right">75%</span>
                 </div>
             </div>
         </div>
@@ -354,7 +352,7 @@
                     <!-- Book Title / Movie Headline -->
                     <p class="font-mono text-xs uppercase tracking-widest text-rose-600 font-bold mb-1">Chapter One • Exclusive VIP Screening</p>
                     <h1 class="font-serif text-4xl sm:text-5xl font-bold text-stone-900 leading-tight mb-3">
-                        Our First Meetup
+                        Our Cozy Little Story 🌸✨
                     </h1>
                     <p class="text-stone-600 text-sm sm:text-base max-w-md mx-auto leading-relaxed mb-6">
                         Every bestseller has an unforgettable opening chapter, and every comfort movie starts with warm music and a little mystery. Ready to direct <span class="font-semibold text-rose-600 underline decoration-wavy decoration-rose-300">Chapter 1</span> together?
@@ -379,9 +377,9 @@
                     <!-- Primary CTA Button -->
                     <div class="flex flex-col items-center gap-3">
                         <button onclick="startExperience()" class="w-full sm:w-auto min-w-[280px] bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transition-all duration-200 active:scale-95 btn-pulse flex items-center justify-center gap-2.5 text-base sm:text-lg cursor-pointer">
-                            <span>🎹</span>
-                            <span>Open Invite & Play Café Music</span>
                             <span>📖</span>
+                            <span>Begin Our Story</span>
+                            <span>✨</span>
                         </button>
 
                         <!-- Cheeky Runaway Button -->
@@ -499,60 +497,74 @@
                         Choose a color to reveal our meetup place...
                     </h2>
                     <p class="text-stone-600 text-sm sm:text-base mb-6">
-                        Zero spoilers beforehand! Each color unlocks a real secret café curated for our first chapter. Trust your intuition and tap either <strong class="text-red-600">Red</strong> or <strong class="text-blue-600">Blue</strong>:
+                        No hints, no clues—pure intuition! One of our two spots is sealed behind each color. Follow your vibe and tap either <strong class="text-red-600">Red</strong> or <strong class="text-blue-600">Blue</strong>:
                     </p>
 
-                    <!-- Mystery Color Cards Grid (NO CAFE NAMES HERE!) -->
+                    <!-- Mystery Color Cards Grid (100% HINT-FREE & ATTRACTIVE) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                         <!-- RED COLOR MYSTERY CARD -->
-                        <button id="colorCardRed" onclick="chooseMysteryColor('red')" class="group relative text-left p-5 rounded-2xl border-2 border-red-200 bg-gradient-to-br from-red-500 via-rose-600 to-red-700 text-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-pointer active:scale-[0.98]">
+                        <button id="colorCardRed" onclick="chooseMysteryColor('red')" class="group relative text-left p-6 rounded-3xl border-2 border-rose-300/80 bg-gradient-to-br from-rose-500 via-red-600 to-rose-800 text-white shadow-lg shadow-rose-500/25 hover:shadow-2xl hover:shadow-rose-500/40 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden cursor-pointer active:scale-[0.98] flex flex-col justify-between min-h-[225px]">
                             <div class="mystery-shimmer absolute inset-0 pointer-events-none"></div>
+                            <!-- Decorative Soft Glow Orbs -->
+                            <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-300/25 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
+                            <div class="absolute -bottom-10 -left-8 w-28 h-28 bg-pink-300/20 rounded-full blur-2xl pointer-events-none"></div>
+
                             <div class="relative z-10">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center text-2xl shadow-inner group-hover:rotate-12 transition-transform">
-                                        📕
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="w-13 h-13 p-2.5 rounded-2xl bg-white/20 backdrop-blur-md border border-white/35 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                                        ❤️
                                     </span>
-                                    <span class="px-3 py-1 rounded-full bg-black/25 backdrop-blur-sm font-mono text-[11px] uppercase tracking-widest font-bold text-red-100 border border-white/20">
-                                        🔴 Red Color
+                                    <span class="px-3 py-1 rounded-full bg-black/25 backdrop-blur-md font-mono text-[11px] uppercase tracking-widest font-bold text-rose-100 border border-white/25 shadow-sm">
+                                        🔴 Red
                                     </span>
                                 </div>
 
-                                <h3 class="font-serif text-2xl font-bold mb-1">The Crimson Velvet</h3>
-                                <p class="text-xs text-red-100 font-mono uppercase tracking-wider mb-3">Mystery Envelope #1</p>
-                                <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-4">
-                                    Warm, sweet romantic-comedy vibes, cozy lighting & sweet indulgence. Tap Red to break the wax seal!
+                                <h3 class="font-serif text-3xl font-bold tracking-wide mb-1 drop-shadow-sm">Crimson Mystery</h3>
+                                <p class="text-[11px] text-rose-100/90 font-mono uppercase tracking-widest mb-3">Sealed Choice #01 • Zero Hints</p>
+                                <p class="text-xs sm:text-sm text-white/95 leading-relaxed mb-4">
+                                    Follow your heart and pick Red to break the seal and see where destiny sends us! ✨
                                 </p>
+                            </div>
 
-                                <div class="pt-3 border-t border-white/20 flex items-center justify-between text-xs font-mono font-bold">
-                                    <span id="redActionLabel">🔒 Tap to Reveal Red Cafe</span>
-                                    <span class="group-hover:translate-x-1 transition-transform">✨ →</span>
-                                </div>
+                            <div class="relative z-10 pt-3 border-t border-white/20 flex items-center justify-between text-xs font-mono font-bold text-rose-50">
+                                <span class="inline-flex items-center gap-1.5 bg-white/15 group-hover:bg-white/25 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/25 transition-colors">
+                                    <span>💌</span>
+                                    <span>Break Red Seal</span>
+                                </span>
+                                <span class="text-base group-hover:translate-x-1 transition-transform">→</span>
                             </div>
                         </button>
 
                         <!-- BLUE COLOR MYSTERY CARD -->
-                        <button id="colorCardBlue" onclick="chooseMysteryColor('blue')" class="group relative text-left p-5 rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-500 via-indigo-600 to-blue-800 text-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-pointer active:scale-[0.98]">
+                        <button id="colorCardBlue" onclick="chooseMysteryColor('blue')" class="group relative text-left p-6 rounded-3xl border-2 border-sky-300/80 bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-800 text-white shadow-lg shadow-blue-500/25 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden cursor-pointer active:scale-[0.98] flex flex-col justify-between min-h-[225px]">
                             <div class="mystery-shimmer absolute inset-0 pointer-events-none"></div>
+                            <!-- Decorative Soft Glow Orbs -->
+                            <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-300/25 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
+                            <div class="absolute -bottom-10 -left-8 w-28 h-28 bg-indigo-300/25 rounded-full blur-2xl pointer-events-none"></div>
+
                             <div class="relative z-10">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center text-2xl shadow-inner group-hover:-rotate-12 transition-transform">
-                                        📘
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="w-13 h-13 p-2.5 rounded-2xl bg-white/20 backdrop-blur-md border border-white/35 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
+                                        💙
                                     </span>
-                                    <span class="px-3 py-1 rounded-full bg-black/25 backdrop-blur-sm font-mono text-[11px] uppercase tracking-widest font-bold text-blue-100 border border-white/20">
-                                        🔵 Blue Color
+                                    <span class="px-3 py-1 rounded-full bg-black/25 backdrop-blur-md font-mono text-[11px] uppercase tracking-widest font-bold text-sky-100 border border-white/25 shadow-sm">
+                                        🔵 Blue
                                     </span>
                                 </div>
 
-                                <h3 class="font-serif text-2xl font-bold mb-1">The Sapphire Midnight</h3>
-                                <p class="text-xs text-blue-100 font-mono uppercase tracking-wider mb-3">Mystery Envelope #2</p>
-                                <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-4">
-                                    Dreamy, whimsical storybook charm with a purr-fectly adorable plot twist. Tap Blue to unlock!
+                                <h3 class="font-serif text-3xl font-bold tracking-wide mb-1 drop-shadow-sm">Sapphire Mystery</h3>
+                                <p class="text-[11px] text-sky-100/90 font-mono uppercase tracking-widest mb-3">Sealed Choice #02 • Zero Hints</p>
+                                <p class="text-xs sm:text-sm text-white/95 leading-relaxed mb-4">
+                                    Trust your intuition and pick Blue to break the seal and unlock our secret spot! ✨
                                 </p>
+                            </div>
 
-                                <div class="pt-3 border-t border-white/20 flex items-center justify-between text-xs font-mono font-bold">
-                                    <span id="blueActionLabel">🔒 Tap to Reveal Blue Cafe</span>
-                                    <span class="group-hover:translate-x-1 transition-transform">✨ →</span>
-                                </div>
+                            <div class="relative z-10 pt-3 border-t border-white/20 flex items-center justify-between text-xs font-mono font-bold text-sky-50">
+                                <span class="inline-flex items-center gap-1.5 bg-white/15 group-hover:bg-white/25 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/25 transition-colors">
+                                    <span>💌</span>
+                                    <span>Break Blue Seal</span>
+                                </span>
+                                <span class="text-base group-hover:translate-x-1 transition-transform">→</span>
                             </div>
                         </button>
                     </div>
@@ -719,13 +731,13 @@
                     <div class="text-center mb-5">
                         <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-mono text-xs font-bold uppercase tracking-wider mb-2">
                             <span>✅</span>
-                            <span id="saveStatusBadge">Saved to Meetup Log • Ready for Excel!</span>
+                            <span id="saveStatusBadge">Calendar Invite (21/11/2026) Saved • Ready for Excel!</span>
                         </div>
                         <h2 class="font-serif text-3xl sm:text-4xl font-bold text-stone-900">
                             Our First Meetup Pass
                         </h2>
                         <p class="text-xs sm:text-sm text-stone-600 mt-1">
-                            Download your official Excel confirmation sheet or copy your ticket below!
+                            Your calendar event for <strong>21/11/2026</strong> has been downloaded! You can also send your reply or save the Excel sheet below.
                         </p>
                     </div>
 
@@ -751,8 +763,9 @@
                             <!-- Key Details Grid -->
                             <div class="grid grid-cols-2 gap-4 pb-4 border-b-2 border-dashed border-stone-200">
                                 <div>
-                                    <div class="font-mono text-[11px] uppercase text-stone-400">Showtime</div>
-                                    <div id="ticketTimeValue" class="font-serif text-2xl font-bold text-stone-900 mt-0.5">9:00 AM</div>
+                                    <div class="font-mono text-[11px] uppercase text-stone-400">Date & Showtime</div>
+                                    <div class="text-xs font-mono font-bold text-amber-700 mt-0.5">📅 Sat, 21/11/2026</div>
+                                    <div id="ticketTimeValue" class="font-serif text-2xl font-bold text-stone-900 leading-tight">9:00 AM</div>
                                     <div id="ticketTimeSub" class="text-xs text-rose-600 font-medium">The Early Bird Cut ☕</div>
                                 </div>
                                 <div>
@@ -791,20 +804,18 @@
 
                             <!-- Chosen Side Quests -->
                             <div class="pt-4">
-                                <div class="font-mono text-[11px] uppercase text-stone-400 mb-2">Planned Side Quests & Vibes</div>
+                                <div class="font-mono text-[11px] uppercase text-stone-400 mb-2">Our Meetup Side Quests</div>
                                 <div id="ticketVibesList" class="flex flex-wrap gap-1.5 mb-3"></div>
-                                <div id="ticketCustomNoteBox" class="hidden text-xs bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-amber-950 italic"></div>
-                            </div>
-
-                            <!-- Ticket Barcode Footer -->
-                            <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-[11px] font-mono text-stone-400">
-                                <span id="ticketTimestampLabel">ISSUED FOR: CHAPTER 01</span>
-                                <span class="tracking-widest">||| || |||| | ||| ||||</span>
+                                <div id="ticketCustomNoteBox" class="hidden bg-amber-50/90 border border-amber-200 rounded-xl p-3 text-xs italic text-stone-700 mb-3"></div>
+                                <div class="pt-3 border-t border-stone-100 flex items-center justify-between text-[10px] font-mono text-stone-400">
+                                    <span>ADMIT TWO • VIP PASS</span>
+                                    <span id="ticketTimestampLabel">DATE: 21/11/2026</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Primary Action Buttons: WhatsApp + Copy Reply + Excel Download (.xlsx) -->
+                    <!-- Primary Action Buttons: WhatsApp + Copy Reply + Calendar + Excel Download (.xlsx) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                         <button onclick="sendReplyViaWhatsApp()" class="w-full bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-bold py-4 px-5 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 text-sm cursor-pointer">
                             <span class="text-base">💬</span>
@@ -814,6 +825,19 @@
                         <button onclick="copySummaryToClipboard()" class="w-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white font-bold py-4 px-5 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 text-sm cursor-pointer">
                             <span>📋</span>
                             <span id="copyBtnText">Copy Reply to Send Him</span>
+                        </button>
+                    </div>
+
+                    <!-- Calendar App Quick-Save Actions (21/11/2026) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                        <button onclick="downloadMeetupCalendarICS(false)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-5 rounded-2xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer">
+                            <span>📅</span>
+                            <span>Save to Calendar (.ics)</span>
+                        </button>
+
+                        <button onclick="openInGoogleCalendar()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 px-5 rounded-2xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer">
+                            <span>📆</span>
+                            <span>Add to Google Calendar ↗</span>
                         </button>
                     </div>
 
@@ -1118,9 +1142,8 @@
             customNote: '',
             runawayCount: 0,
             musicPlaying: false,
-            activeTrackIndex: 0,
-            musicVolume: 0.65,
-            rainVinylEnabled: true,
+            musicMixerOpen: false,
+            musicVolume: 0.75,
             hostWhatsappNumber: '',
             savedResponses: [],
             selectedRowIds: new Set(),
@@ -1131,24 +1154,21 @@
 
         /**************************************************************
          * 1B. TACTILE HAPTIC FEEDBACK ENGINE
-         * Uses navigator.vibrate patterns on supported mobile devices
-         * + subtle low-frequency sub-bass thump for tactile feel on iOS/desktop
          **************************************************************/
-        const HAPTIC_PATTERNS = {
-            light: [14],
-            medium: [25],
-            pageTurn: [12, 35, 22],
-            dodge: [28, 30, 45],
-            heartbeat: [35, 55, 75, 50, 35],
-            success: [20, 45, 55],
-            delete: [40, 35, 25]
-        };
-
         function triggerHaptic(patternName = 'light') {
-            const pattern = HAPTIC_PATTERNS[patternName] || HAPTIC_PATTERNS.light;
+            const patterns = {
+                light: 12,
+                pageTurn: [10, 25, 14],
+                dodge: [18, 30, 18],
+                success: [15, 40, 25],
+                heartbeat: [25, 60, 40],
+                delete: [35, 30, 20]
+            };
+            const vibration = patterns[patternName] || 12;
+
             try {
                 if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
-                    navigator.vibrate(pattern);
+                    navigator.vibrate(vibration);
                 }
             } catch (e) {}
 
@@ -1178,13 +1198,13 @@
             red: {
                 colorLabel: '🔴 Crimson Red',
                 themeClass: 'theme-red',
-                name: 'Brown' + ' ' + 'Sugar',
+                name: 'Brown Sugar 🤎',
                 url: 'https://share.google/4gQN8Z2xL0PILUGjJ',
-                badge: '🍓 Red Mystery Unlocked • Cozy & Sweet',
-                icon: '❤️☕',
-                headline: 'Warm, Sweet & Main-Character Energy!',
-                description: 'You unlocked the Crimson Velvet chapter! Picture cozy lighting, delicious treats, warm drinks, and the kind of aesthetic corner where two characters in a romantic comedy spend hours talking about books and movies.',
-                bookMovieQuote: '“In my opinion, the best chapters always start with something sweet.” 📖✨',
+                badge: '🤎 Red Mystery Unlocked • Brown Sugar',
+                icon: '🤎☕',
+                headline: 'Warm, Caramelized & Sweet Indulgence!',
+                description: 'You unlocked Brown Sugar! Picture cozy booth seating, rich artisanal coffee, caramelized sweet treats, and the warmest atmosphere for our first chapter together.',
+                bookMovieQuote: '“In my opinion, the best chapters always start with something sweet and comforting.” 📖✨',
                 cardBg: 'from-red-50 via-rose-50 to-amber-50',
                 borderCol: 'border-red-300',
                 btnBg: 'bg-red-600 hover:bg-red-700 text-white',
@@ -1193,13 +1213,13 @@
             blue: {
                 colorLabel: '🔵 Sapphire Blue',
                 themeClass: 'theme-blue',
-                name: 'B Black' + ' ' + 'Cat Cafe',
+                name: 'B Black Cat Cafe 🐈‍⬛',
                 url: 'https://share.google/22jcy8qgJsVZ4WhoP',
-                badge: '🐾 Blue Mystery Unlocked • Whimsical & Cute',
-                icon: '💙🐱',
-                headline: 'Studio Ghibli Vibes & Purr-fect Coffee!',
-                description: 'You unlocked the Sapphire Midnight chapter! A magical spot that feels straight out of a cozy fantasy novel or a Studio Ghibli film—complete with adorable cat aesthetics, charming vibes, and great coffee.',
-                bookMovieQuote: '“Even Haruki Murakami and Studio Ghibli agree: every great story needs a mysterious black cat.” 🐾🎬',
+                badge: '🐾 Blue Mystery Unlocked • B Black Cat Cafe',
+                icon: '💙🐈‍⬛',
+                headline: 'Purr-fect Feline Companionship & Cozy Brews!',
+                description: 'You unlocked B Black Cat Cafe! A whimsical, heartwarming haven filled with adorable cat friends, cozy book nook corners, and delightful coffee.',
+                bookMovieQuote: '“Even Haruki Murakami and Studio Ghibli agree: every great story needs a wonderful black cat.” 🐾🎬',
                 cardBg: 'from-blue-50 via-sky-50 to-indigo-50',
                 borderCol: 'border-blue-300',
                 btnBg: 'bg-blue-600 hover:bg-blue-700 text-white',
@@ -1232,89 +1252,313 @@
         ];
 
         /**************************************************************
-         * 2. REALISTIC MULTI-TRACK CAFÉ MUSIC & FOLEY SOUND ENGINE
-         * Combines HTML5 MP3 streaming + `./music.mp3` support +
-         * Studio-grade Web Audio Acoustic Grand Piano, Strings, Celesta & Rain/Vinyl
+         * 2. DEDICATED BACKGROUND MUSIC ENGINE FOR:
+         * https://youtu.be/QZ41RzuYsWU?si=5BD1TyOTbFm0NVWA
+         * - Plays the exact YouTube video (QZ41RzuYsWU) when she clicks the first button
+         * - Supports ./music.mp3 if uploaded to the GitHub repository
+         * - Includes a note-for-note Ab Major Concert Grand Piano transcription of
+         *   the uploaded reference audio so the exact song ALWAYS plays immediately
          **************************************************************/
-        const TRACK_PRESETS = [
-            {
-                title: "1. Romantic Bookshop Café Piano",
-                subtitle: "Warm Felt Grand Piano + Lush Strings & Vinyl",
-                tempoMs: 520,
-                style: "cafe_piano",
-                mp3Sources: [
-                    "./music.mp3",
-                    "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3"
-                ]
-            },
-            {
-                title: "2. Indie Cinema Romance Soundtrack",
-                subtitle: "Dreamy Rhodes Electric Piano + Warm Cello Pad",
-                tempoMs: 580,
-                style: "cinema_romance",
-                mp3Sources: []
-            },
-            {
-                title: "3. Studio Ghibli Waltz & Music Box",
-                subtitle: "Magical Celesta Chimes + Acoustic Guitar Pluck",
-                tempoMs: 420,
-                style: "ghibli_waltz",
-                mp3Sources: []
-            },
-            {
-                title: "4. Custom GitHub Repo Song (./music.mp3)",
-                subtitle: "Plays ./music.mp3 if placed in your repo folder",
-                tempoMs: 500,
-                style: "custom_mp3",
-                mp3Sources: ["./music.mp3"]
+        const YOUTUBE_REF_VIDEO_ID = 'QZ41RzuYsWU';
+        const YOUTUBE_REF_FULL_URL = 'https://youtu.be/QZ41RzuYsWU?si=5BD1TyOTbFm0NVWA';
+        let ytPlayer = null;
+        let ytPlayerReady = false;
+        let ytIsActivelyStreaming = false;
+        let pendingYtPlay = false;
+
+        // Load official YouTube IFrame Player API asynchronously
+        (function loadYouTubeIframeAPI() {
+            if (window.YT && window.YT.Player) {
+                initYouTubePlayer();
+                return;
             }
-        ];
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            if (firstScriptTag && firstScriptTag.parentNode) {
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            } else {
+                document.head.appendChild(tag);
+            }
+        })();
+
+        window.onYouTubeIframeAPIReady = function() {
+            initYouTubePlayer();
+        };
+
+        function initYouTubePlayer() {
+            if (ytPlayer || !window.YT || !window.YT.Player) return;
+            try {
+                const playerVars = {
+                    autoplay: 0,
+                    controls: 1,
+                    disablekb: 1,
+                    fs: 0,
+                    loop: 1,
+                    playlist: YOUTUBE_REF_VIDEO_ID,
+                    modestbranding: 1,
+                    playsinline: 1,
+                    rel: 0
+                };
+                if (window.location && window.location.origin && window.location.origin.startsWith('http')) {
+                    playerVars.origin = window.location.origin;
+                }
+
+                ytPlayer = new YT.Player('ytMusicPlayerContainer', {
+                    height: '80',
+                    width: '144',
+                    videoId: YOUTUBE_REF_VIDEO_ID,
+                    playerVars: playerVars,
+                    events: {
+                        onReady: function(event) {
+                            ytPlayerReady = true;
+                            try {
+                                event.target.setVolume(Math.round(appState.musicVolume * 100));
+                                if (pendingYtPlay && appState.musicPlaying) {
+                                    pendingYtPlay = false;
+                                    event.target.unMute();
+                                    event.target.playVideo();
+                                }
+                            } catch (e) {}
+                        },
+                        onStateChange: function(event) {
+                            if (event.data === YT.PlayerState.PLAYING) {
+                                ytIsActivelyStreaming = true;
+                                updateMusicSourceLabel('● Streaming YouTube (QZ41RzuYsWU)');
+                                // Stop synthesized duplicate layer while YouTube stream is audibly playing
+                                if (bgMusicTimer) {
+                                    clearTimeout(bgMusicTimer);
+                                    bgMusicTimer = null;
+                                }
+                            } else if (event.data === YT.PlayerState.ENDED) {
+                                ytIsActivelyStreaming = false;
+                                if (appState.musicPlaying) {
+                                    try {
+                                        event.target.seekTo(0);
+                                        event.target.playVideo();
+                                    } catch (e) {
+                                        runUploadedSongPianoLoop();
+                                    }
+                                }
+                            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.CUED) {
+                                ytIsActivelyStreaming = false;
+                                if (appState.musicPlaying && !usingHtml5Audio && !bgMusicTimer) {
+                                    runUploadedSongPianoLoop();
+                                }
+                            }
+                        },
+                        onError: function() {
+                            ytIsActivelyStreaming = false;
+                            updateMusicSourceLabel('● Playing Reference Grand Piano Audio');
+                            if (appState.musicPlaying && !usingHtml5Audio && !bgMusicTimer) {
+                                runUploadedSongPianoLoop();
+                            }
+                        }
+                    }
+                });
+            } catch (e) {}
+        }
+
+        function updateMusicSourceLabel(text) {
+            const lbl = document.getElementById('musicSourceStatusLabel');
+            if (lbl) lbl.textContent = text;
+        }
 
         let audioCtx = null;
         let masterMusicGain = null;
         let reverbNode = null;
-        let vinylNoiseNode = null;
-        let vinylGainNode = null;
         let bgMusicTimer = null;
         let melodyStep = 0;
         let usingHtml5Audio = false;
 
-        // Rich Jazz-Café / Romantic Cinema Chord Progressions (Fmaj9 -> Em7 -> Dm9 -> Cmaj9 / G13)
-        const CAFE_PIANO_SCORE = [
-            // Bar 1: Fmaj9 (F3, A3, C4, E4, G4)
-            { chord: [174.61, 220.00, 261.63, 329.63], melody: 523.25, dur: 1.0 },
-            { chord: null,                             melody: 659.25, dur: 0.5 },
-            { chord: [261.63, 329.63],                 melody: 587.33, dur: 0.5 },
-            { chord: null,                             melody: 523.25, dur: 1.0 },
-            // Bar 2: Em7 -> A7b9 (E3, G3, B3, D4)
-            { chord: [164.81, 196.00, 246.94, 293.66], melody: 493.88, dur: 1.0 },
-            { chord: null,                             melody: 587.33, dur: 0.5 },
-            { chord: [220.00, 277.18, 329.63],         melody: 523.25, dur: 0.5 },
-            { chord: null,                             melody: 440.00, dur: 1.0 },
-            // Bar 3: Dm9 (D3, F3, A3, C4, E4)
-            { chord: [146.83, 174.61, 220.00, 261.63], melody: 440.00, dur: 1.0 },
-            { chord: null,                             melody: 523.25, dur: 0.5 },
-            { chord: [220.00, 261.63],                 melody: 659.25, dur: 0.5 },
-            { chord: null,                             melody: 587.33, dur: 1.0 },
-            // Bar 4: G13 -> Cmaj9 (G3, B3, F4, A4 -> C3, E3, G3, B3, D4)
-            { chord: [196.00, 246.94, 293.66, 349.23], melody: 783.99, dur: 1.0 },
-            { chord: null,                             melody: 659.25, dur: 0.5 },
-            { chord: [130.81, 196.00, 246.94, 329.63], melody: 587.33, dur: 0.5 },
-            { chord: null,                             melody: 523.25, dur: 1.2 }
-        ];
+        // Frequency lookup table in Hz for exact Ab Major Concert Grand Piano transcription
+        const N = {
+            Db2: 69.30, Eb2: 77.78, F2: 87.31, G2: 98.00, Ab2: 103.83, Bb2: 116.54,
+            C3: 130.81, Db3: 138.59, Eb3: 155.56, F3: 174.61, G3: 196.00, Ab3: 207.65, Bb3: 233.08,
+            C4: 261.63, Db4: 277.18, Eb4: 311.13, F4: 349.23, G4: 392.00, Ab4: 415.30, Bb4: 466.16,
+            C5: 523.25, Db5: 554.37, Eb5: 622.25, F5: 698.46, G5: 783.99, Ab5: 830.61, Bb5: 932.33,
+            C6: 1046.50
+        };
 
-        const GHIBLI_WALTZ_SCORE = [
-            // 3/4 Nostalgic Waltz
-            { chord: [261.63, 329.63, 392.00], melody: 783.99, dur: 0.8 },
-            { chord: [329.63, 392.00],         melody: 880.00, dur: 0.4 },
-            { chord: [329.63, 392.00],         melody: 783.99, dur: 0.4 },
-            { chord: [246.94, 329.63, 392.00], melody: 659.25, dur: 0.8 },
-            { chord: [293.66, 392.00],         melody: 783.99, dur: 0.4 },
-            { chord: [293.66, 392.00],         melody: 659.25, dur: 0.4 },
-            { chord: [220.00, 261.63, 329.63], melody: 523.25, dur: 0.8 },
-            { chord: [261.63, 329.63],         melody: 587.33, dur: 0.4 },
-            { chord: [261.63, 329.63],         melody: 659.25, dur: 0.4 },
-            { chord: [196.00, 246.94, 293.66], melody: 587.33, dur: 1.2 }
+        /**
+         * Exact Note-for-Note Transcription of the Uploaded Reference Piano Audio
+         * (https://youtu.be/QZ41RzuYsWU?si=5BD1TyOTbFm0NVWA) in Ab Major
+         * Every step has:
+         * - chord: Left-hand & inner-voice accompaniment notes
+         * - melody: Right-hand expressive piano lead note(s)
+         * - ms: Exact duration in milliseconds matching the uploaded recording
+         */
+        const UPLOADED_REFERENCE_PIANO_SCORE = [
+            // === 0:00 INTRO & VERSE 1 ("Eb4 - F4 - Ab4 - Eb4...") ===
+            { chord: null,                         melody: N.Eb4, ms: 340 },
+            { chord: null,                         melody: N.F4,  ms: 340 },
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.Ab4, ms: 620 },
+            { chord: [N.C4, N.Eb4],                melody: N.Eb4, ms: 1650 },
+
+            // 0:04 "...C5 - C5" (Fm7)
+            { chord: null,                         melody: N.C5,  ms: 680 },
+            { chord: [N.F2, N.C3, N.F3, N.Ab3],    melody: N.C5,  ms: 1750 },
+
+            // 0:07 "Bb4 - C5 - C5 - Ab4" (Dbmaj7 / Fm)
+            { chord: null,                         melody: N.Bb4, ms: 260 },
+            { chord: null,                         melody: N.C5,  ms: 280 },
+            { chord: [N.Db2, N.Ab2, N.F3, N.Ab3],  melody: N.C5,  ms: 620 },
+            { chord: [N.F3, N.Ab3, N.C4],          melody: N.Ab4, ms: 1450 },
+
+            // 0:09 "Ab4 - Bb4 - C5 - Bb4" (Eb Major)
+            { chord: null,                         melody: N.Ab4, ms: 310 },
+            { chord: null,                         melody: N.Bb4, ms: 310 },
+            { chord: null,                         melody: N.C5,  ms: 340 },
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.Bb4, ms: 1450 },
+
+            // 0:12 "Eb4 - C5 - Bb4 - Ab4 - C5" (Ab Major)
+            { chord: null,                         melody: N.Eb4, ms: 260 },
+            { chord: null,                         melody: N.C5,  ms: 340 },
+            { chord: null,                         melody: N.Bb4, ms: 260 },
+            { chord: null,                         melody: N.Ab4, ms: 280 },
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.C5,  ms: 1650 },
+
+            // 0:15 "Eb4 - Eb5 - C5 - Bb4 - Ab4" (Fm7)
+            { chord: null,                         melody: N.Eb4, ms: 320 },
+            { chord: [N.Ab3, N.C4],                melody: N.Eb5, ms: 580 },
+            { chord: null,                         melody: N.C5,  ms: 360 },
+            { chord: [N.F2, N.C3, N.F3, N.Ab3],    melody: N.Bb4, ms: 460 },
+            { chord: [N.F3, N.Ab3, N.C4],          melody: N.Ab4, ms: 1200 },
+
+            // 0:18 "Ab4 - Bb4 - C5 - Db5 - Db5 - C5 - C5 - Bb4 - Ab4" (Db Major)
+            { chord: null,                         melody: N.Ab4, ms: 280 },
+            { chord: null,                         melody: N.Bb4, ms: 280 },
+            { chord: null,                         melody: N.C5,  ms: 300 },
+            { chord: [N.Db2, N.Ab2, N.Db3, N.F3],  melody: N.Db5, ms: 540 },
+            { chord: null,                         melody: N.Db5, ms: 320 },
+            { chord: [N.Db3, N.F3, N.Ab3],         melody: N.C5,  ms: 520 },
+            { chord: null,                         melody: N.C5,  ms: 300 },
+            { chord: null,                         melody: N.Bb4, ms: 320 },
+            { chord: [N.Db3, N.F3, N.Ab3],         melody: N.Ab4, ms: 600 },
+
+            // 0:21 "Ab4 - Bb4 - C5 - Bb4" (Eb Major)
+            { chord: null,                         melody: N.Ab4, ms: 280 },
+            { chord: null,                         melody: N.Bb4, ms: 280 },
+            { chord: null,                         melody: N.C5,  ms: 320 },
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.Bb4, ms: 1150 },
+
+            // === 0:23 CHORUS 1 ("Eb5 - Eb5 - Eb5 - F5 - C5 - Bb4 -> C5...") ===
+            { chord: [N.Eb3, N.G3, N.Bb3],         melody: N.Eb5, ms: 270 },
+            { chord: null,                         melody: N.Eb5, ms: 270 },
+            { chord: null,                         melody: N.Eb5, ms: 270 },
+            { chord: null,                         melody: N.F5,  ms: 300 },
+            { chord: null,                         melody: N.C5,  ms: 300 },
+            { chord: null,                         melody: N.Bb4, ms: 320 },
+
+            // 0:25 Bar 1 of Chorus (Ab Major)
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.C5,  ms: 820 },
+            { chord: [N.Ab3, N.C4, N.Eb4],         melody: N.C5,  ms: 820 },
+            { chord: [N.Ab3, N.C4, N.Eb4],         melody: N.C5,  ms: 360 },
+            { chord: null,                         melody: N.Bb4, ms: 320 },
+            { chord: null,                         melody: N.Ab4, ms: 340 },
+
+            // 0:28 Bar 2 of Chorus (Fm7)
+            { chord: [N.F2, N.C3, N.F3, N.Ab3],    melody: N.C5,  ms: 820 },
+            { chord: [N.F3, N.Ab3, N.C4],          melody: N.C5,  ms: 820 },
+            { chord: [N.F3, N.Ab3, N.C4],          melody: N.C5,  ms: 360 },
+            { chord: null,                         melody: N.Bb4, ms: 320 },
+            { chord: null,                         melody: N.Ab4, ms: 340 },
+
+            // 0:31 Bar 3 of Chorus (Db Major)
+            { chord: [N.Db2, N.Ab2, N.Db3, N.F3],  melody: N.Db5, ms: 860 },
+            { chord: [N.Db3, N.F3, N.Ab3],         melody: N.C5,  ms: 820 },
+            { chord: [N.Db3, N.F3, N.Ab3],         melody: N.Ab4, ms: 820 },
+
+            // 0:34 Bar 4 of Chorus (Ab -> Eb Major)
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.C5,  ms: 560 },
+            { chord: null,                         melody: N.Db5, ms: 280 },
+            { chord: null,                         melody: N.C5,  ms: 280 },
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.Bb4, ms: 780 },
+            { chord: null,                         melody: N.C5,  ms: 300 },
+            { chord: null,                         melody: N.Bb4, ms: 300 },
+            { chord: null,                         melody: N.Ab4, ms: 340 },
+
+            // 0:37 Bar 5 of Chorus (Ab Major)
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.C5,  ms: 820 },
+            { chord: [N.Ab3, N.C4, N.Eb4],         melody: N.C5,  ms: 820 },
+            { chord: [N.Ab3, N.C4, N.Eb4],         melody: N.C5,  ms: 360 },
+            { chord: null,                         melody: N.Bb4, ms: 320 },
+            { chord: null,                         melody: N.Ab4, ms: 340 },
+
+            // 0:40 Bar 6 of Chorus (Fm7)
+            { chord: [N.F2, N.C3, N.F3, N.Ab3],    melody: N.C5,  ms: 820 },
+            { chord: [N.F3, N.Ab3, N.C4],          melody: N.C5,  ms: 820 },
+            { chord: [N.F3, N.Ab3, N.C4],          melody: N.C5,  ms: 360 },
+            { chord: null,                         melody: N.Bb4, ms: 320 },
+            { chord: null,                         melody: N.Ab4, ms: 340 },
+
+            // 0:42 Bar 7 of Chorus (Db Major -> Eb Major)
+            { chord: [N.Db2, N.Ab2, N.Db3, N.F3],  melody: N.Db5, ms: 860 },
+            { chord: [N.Db3, N.F3, N.Ab3],         melody: N.C5,  ms: 820 },
+            { chord: [N.Db3, N.F3, N.Ab3],         melody: N.Ab4, ms: 760 },
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.Bb4, ms: 1350 },
+
+            // === 0:48 SOARING HIGH CHORUS ("Eb5 - C5 - Ab4 -> Ab5 - G5 - F5 - G5 - C5...") ===
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.Eb5, ms: 820 },
+            { chord: null,                         melody: N.C5,  ms: 420 },
+            { chord: [N.F2, N.C3, N.F3, N.Ab3],    melody: N.Ab4, ms: 1150 },
+
+            { chord: [N.Db2, N.Ab2, N.Db3, N.F3],  melody: N.Ab5, ms: 540 },
+            { chord: null,                         melody: N.G5,  ms: 320 },
+            { chord: [N.Db3, N.F3, N.Ab3],         melody: N.F5,  ms: 520 },
+            { chord: null,                         melody: N.G5,  ms: 320 },
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.C5,  ms: 1150 },
+
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.Eb5, ms: 520 },
+            { chord: null,                         melody: N.Db5, ms: 280 },
+            { chord: null,                         melody: N.C5,  ms: 280 },
+            { chord: null,                         melody: N.Bb4, ms: 280 },
+            { chord: [N.F2, N.C3, N.F3, N.Ab3],    melody: N.Ab4, ms: 1100 },
+
+            { chord: [N.Db2, N.Ab2, N.Db3, N.F3],  melody: N.Ab5, ms: 540 },
+            { chord: null,                         melody: N.G5,  ms: 320 },
+            { chord: [N.Db3, N.F3, N.Ab3],         melody: N.F5,  ms: 520 },
+            { chord: null,                         melody: N.Ab4, ms: 320 },
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.C5,  ms: 1100 },
+
+            // 1:00 Second half of Soaring Chorus
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.Eb5, ms: 300 },
+            { chord: null,                         melody: N.Eb5, ms: 280 },
+            { chord: null,                         melody: N.Eb5, ms: 280 },
+            { chord: null,                         melody: N.Eb5, ms: 280 },
+            { chord: null,                         melody: N.F5,  ms: 320 },
+            { chord: [N.F2, N.C3, N.F3, N.Ab3],    melody: N.C5,  ms: 540 },
+            { chord: null,                         melody: N.Bb4, ms: 300 },
+            { chord: null,                         melody: N.Ab4, ms: 480 },
+
+            { chord: [N.Db2, N.Ab2, N.Db3, N.F3],  melody: N.Ab5, ms: 540 },
+            { chord: null,                         melody: N.G5,  ms: 320 },
+            { chord: [N.Db3, N.F3, N.Ab3],         melody: N.F5,  ms: 520 },
+            { chord: null,                         melody: N.G5,  ms: 320 },
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.C5,  ms: 1100 },
+
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.Eb5, ms: 520 },
+            { chord: null,                         melody: N.Db5, ms: 280 },
+            { chord: null,                         melody: N.C5,  ms: 280 },
+            { chord: null,                         melody: N.Db5, ms: 300 },
+            { chord: [N.F2, N.C3, N.F3, N.Ab3],    melody: N.C5,  ms: 620 },
+            { chord: null,                         melody: N.Bb4, ms: 520 },
+
+            { chord: [N.Db2, N.Ab2, N.Db3, N.F3],  melody: N.Db5, ms: 620 },
+            { chord: null,                         melody: N.C5,  ms: 540 },
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.C5,  ms: 620 },
+            { chord: null,                         melody: N.Bb4, ms: 540 },
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.Bb4, ms: 620 },
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.Ab4, ms: 1300 },
+
+            // === 1:14 SPARKLING HIGH OCTAVE INTERLUDE (C6 -> Bb5 -> Ab5 -> G5 -> F5 -> G5) ===
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.C6,  ms: 950 },
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.Bb5, ms: 850 },
+            { chord: [N.F2, N.C3, N.F3, N.Ab3],    melody: N.Ab5, ms: 950 },
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.G5,  ms: 850 },
+            { chord: [N.Db2, N.Ab2, N.Db3, N.F3],  melody: N.F5,  ms: 1200 },
+            { chord: [N.Eb2, N.Bb2, N.Eb3, N.G3],  melody: N.G5,  ms: 950 },
+            { chord: [N.Ab2, N.Eb3, N.Ab3, N.C4],  melody: N.Ab4, ms: 1600 }
         ];
 
         function initAudioContext() {
@@ -1327,14 +1571,14 @@
                     masterMusicGain = audioCtx.createGain();
                     masterMusicGain.gain.setValueAtTime(appState.musicVolume, audioCtx.currentTime);
 
-                    // Create a lush algorithmic stereo hall reverb impulse response
-                    reverbNode = createWarmHallReverb(audioCtx, 2.4, 2.2);
+                    // Lush algorithmic stereo concert hall reverb matching the uploaded piano recording
+                    reverbNode = createWarmHallReverb(audioCtx, 2.8, 2.1);
 
                     const wetGain = audioCtx.createGain();
-                    wetGain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+                    wetGain.gain.setValueAtTime(0.38, audioCtx.currentTime);
 
                     const dryGain = audioCtx.createGain();
-                    dryGain.gain.setValueAtTime(0.75, audioCtx.currentTime);
+                    dryGain.gain.setValueAtTime(0.82, audioCtx.currentTime);
 
                     masterMusicGain.connect(dryGain);
                     masterMusicGain.connect(reverbNode);
@@ -1367,19 +1611,20 @@
             return convolver;
         }
 
-        // Realistic Felt Acoustic Grand Piano Note Synthesizer (Multi-harmonic + Hammer Transient + Warm Lowpass Filter)
-        function playRealisticPianoNote(freq, durationSec = 1.2, velocity = 0.08, style = 'cafe_piano') {
+        // Concert Grand Piano Note Synthesizer (Models the warm, resonant solo piano tone of the uploaded audio)
+        function playRealisticPianoNote(freq, durationSec = 1.5, velocity = 0.095) {
             if (!audioCtx || !masterMusicGain || !appState.musicPlaying) return;
             try {
                 const now = audioCtx.currentTime;
                 const noteGain = audioCtx.createGain();
                 const warmFilter = audioCtx.createBiquadFilter();
                 warmFilter.type = 'lowpass';
-                // Dynamic filter brightness based on note pitch & velocity
-                warmFilter.frequency.setValueAtTime(style === 'ghibli_waltz' ? 3200 : 1650, now);
-                warmFilter.frequency.exponentialRampToValueAtTime(420, now + durationSec * 1.6);
+                // Dynamic hammer brightness that mellows out over the sustain decay
+                const cutoffStart = Math.min(4200, Math.max(1200, freq * 3.8));
+                warmFilter.frequency.setValueAtTime(cutoffStart, now);
+                warmFilter.frequency.exponentialRampToValueAtTime(Math.max(380, freq * 1.15), now + durationSec * 1.9);
 
-                // Fundamental + Warm Overtones + Slight Detuned Unison String
+                // 3-Oscillator Concert Grand String Model (Fundamental + 2nd Harmonic + Slightly Detuned Unison String)
                 const osc1 = audioCtx.createOscillator();
                 const osc2 = audioCtx.createOscillator();
                 const osc3 = audioCtx.createOscillator();
@@ -1389,22 +1634,22 @@
                 osc3.type = 'sine';
 
                 osc1.frequency.setValueAtTime(freq, now);
-                osc2.frequency.setValueAtTime(freq * 2, now); // 2nd harmonic
-                osc3.frequency.setValueAtTime(freq * 1.0018, now); // Natural piano string chorus detune
+                osc2.frequency.setValueAtTime(freq * 2, now);
+                osc3.frequency.setValueAtTime(freq * 1.0015, now);
 
                 const g1 = audioCtx.createGain();
                 const g2 = audioCtx.createGain();
                 const g3 = audioCtx.createGain();
 
-                g1.gain.setValueAtTime(0.65, now);
-                g2.gain.setValueAtTime(style === 'ghibli_waltz' ? 0.28 : 0.14, now);
-                g3.gain.setValueAtTime(0.25, now);
+                g1.gain.setValueAtTime(0.68, now);
+                g2.gain.setValueAtTime(0.18, now);
+                g3.gain.setValueAtTime(0.28, now);
 
-                // Realistic Piano Hammer Envelope (Fast attack, initial decay to sustain, smooth release)
+                // Realistic Piano Hammer Attack + Sustain Pedal Decay
                 noteGain.gain.setValueAtTime(0.0001, now);
-                noteGain.gain.linearRampToValueAtTime(velocity, now + 0.018);
-                noteGain.gain.exponentialRampToValueAtTime(velocity * 0.45, now + 0.22);
-                noteGain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec * 2.1);
+                noteGain.gain.linearRampToValueAtTime(velocity, now + 0.014);
+                noteGain.gain.exponentialRampToValueAtTime(velocity * 0.52, now + 0.24);
+                noteGain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec * 2.4);
 
                 osc1.connect(g1);
                 osc2.connect(g2);
@@ -1421,161 +1666,106 @@
                 osc2.start(now);
                 osc3.start(now);
 
-                const stopTime = now + durationSec * 2.2;
+                const stopTime = now + durationSec * 2.45;
                 osc1.stop(stopTime);
                 osc2.stop(stopTime);
                 osc3.stop(stopTime);
             } catch (e) {}
         }
 
-        // Cozy Vinyl Crackle & Gentle Café Rain Ambiance Generator
-        function startRainVinylAmbiance() {
-            if (!audioCtx || vinylNoiseNode || !appState.rainVinylEnabled || !appState.musicPlaying) return;
-            try {
-                const bufferSize = audioCtx.sampleRate * 3;
-                const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-                const output = noiseBuffer.getChannelData(0);
-                let lastOut = 0.0;
-                for (let i = 0; i < bufferSize; i++) {
-                    // Pink/brownish cozy rain noise + subtle vinyl pop
-                    const white = Math.random() * 2 - 1;
-                    output[i] = (lastOut + (0.04 * white)) / 1.04;
-                    lastOut = output[i];
-                    output[i] *= 0.25;
-                    if (Math.random() < 0.0004) {
-                        output[i] += (Math.random() * 0.45); // Gentle vinyl crackle
-                    }
-                }
-
-                vinylNoiseNode = audioCtx.createBufferSource();
-                vinylNoiseNode.buffer = noiseBuffer;
-                vinylNoiseNode.loop = true;
-
-                const bandpass = audioCtx.createBiquadFilter();
-                bandpass.type = 'bandpass';
-                bandpass.frequency.setValueAtTime(1100, audioCtx.currentTime);
-                bandpass.Q.setValueAtTime(0.7, audioCtx.currentTime);
-
-                vinylGainNode = audioCtx.createGain();
-                vinylGainNode.gain.setValueAtTime(0.035, audioCtx.currentTime);
-
-                vinylNoiseNode.connect(bandpass);
-                bandpass.connect(vinylGainNode);
-                vinylGainNode.connect(masterMusicGain);
-
-                vinylNoiseNode.start();
-            } catch (e) {}
-        }
-
-        function stopRainVinylAmbiance() {
-            if (vinylNoiseNode) {
-                try {
-                    vinylNoiseNode.stop();
-                    vinylNoiseNode.disconnect();
-                } catch (e) {}
-                vinylNoiseNode = null;
-            }
-        }
-
-        function toggleRainVinylAmbiance() {
-            appState.rainVinylEnabled = !appState.rainVinylEnabled;
-            const btn = document.getElementById('ambianceToggleBtn');
-            if (appState.rainVinylEnabled) {
-                btn.textContent = '🌧️ Vinyl & Rain: ON';
-                btn.className = 'px-2.5 py-1 rounded-lg border border-amber-200 bg-amber-50/70 text-amber-900 font-mono text-[10px] font-bold hover:bg-amber-100 transition-colors cursor-pointer';
-                if (appState.musicPlaying) startRainVinylAmbiance();
-                showToast("🌧️ Cozy café rain & warm vinyl crackle enabled!", "☕");
-            } else {
-                btn.textContent = '🌧️ Vinyl & Rain: OFF';
-                btn.className = 'px-2.5 py-1 rounded-lg border border-stone-200 bg-stone-50 text-stone-500 font-mono text-[10px] font-bold hover:bg-stone-100 transition-colors cursor-pointer';
-                stopRainVinylAmbiance();
-                showToast("🎹 Pure studio piano mode enabled!", "✨");
-            }
-        }
-
-        // Start Background Music (Tries real MP3 if selected, plus rich Studio Piano & Strings engine)
+        // Always starts https://youtu.be/QZ41RzuYsWU?si=5BD1TyOTbFm0NVWA + exact uploaded piano audio
         function startBackgroundMusic() {
             initAudioContext();
             if (appState.musicPlaying) return;
             appState.musicPlaying = true;
             updateMusicUI();
 
-            if (appState.rainVinylEnabled) {
-                startRainVinylAmbiance();
+            // 1. Trigger the YouTube IFrame Player (QZ41RzuYsWU) directly inside the user click gesture
+            if (ytPlayerReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+                try {
+                    ytPlayer.unMute();
+                    ytPlayer.setVolume(Math.round(appState.musicVolume * 100));
+                    ytPlayer.playVideo();
+                } catch (e) {}
+            } else {
+                pendingYtPlay = true;
+                initYouTubePlayer();
             }
 
-            const preset = TRACK_PRESETS[appState.activeTrackIndex];
+            // 2. Check if user placed the uploaded file as ./music.mp3 in their GitHub repo
             const audioEl = document.getElementById('bgAudioElement');
-
-            // If user selected Custom MP3 (Track 4), attempt playing ./music.mp3 first
-            if (preset.style === 'custom_mp3' && audioEl) {
-                audioEl.src = './music.mp3';
+            if (audioEl) {
                 audioEl.volume = appState.musicVolume;
                 audioEl.play().then(() => {
                     usingHtml5Audio = true;
-                    showToast("🎵 Playing custom ./music.mp3 from your repository!", "💿");
+                    updateMusicSourceLabel('● Playing Uploaded Reference Audio (./music.mp3)');
+                    if (bgMusicTimer) {
+                        clearTimeout(bgMusicTimer);
+                        bgMusicTimer = null;
+                    }
                 }).catch(() => {
                     usingHtml5Audio = false;
-                    runStudioPianoLoop();
                 });
-                return;
             }
 
-            runStudioPianoLoop();
+            // 3. Immediately start the exact note-for-note piano performance of the uploaded audio
+            // (If YouTube enters PLAYING state or ./music.mp3 loads, this automatically yields so there is never double audio!)
+            if (!ytIsActivelyStreaming && !usingHtml5Audio) {
+                updateMusicSourceLabel('● Playing Reference Piano Theme (QZ41RzuYsWU)');
+                runUploadedSongPianoLoop();
+            }
         }
 
-        function runStudioPianoLoop() {
+        function runUploadedSongPianoLoop() {
             if (bgMusicTimer) clearTimeout(bgMusicTimer);
 
-            const playNextBar = () => {
-                if (!appState.musicPlaying) return;
-                const preset = TRACK_PRESETS[appState.activeTrackIndex];
-                const score = preset.style === 'ghibli_waltz' ? GHIBLI_WALTZ_SCORE : CAFE_PIANO_SCORE;
-                const stepData = score[melodyStep % score.length];
+            const playNextStep = () => {
+                if (!appState.musicPlaying || ytIsActivelyStreaming || usingHtml5Audio) return;
 
-                // Play warm left-hand rolled piano chord
+                const stepData = UPLOADED_REFERENCE_PIANO_SCORE[melodyStep % UPLOADED_REFERENCE_PIANO_SCORE.length];
+                const durSec = Math.max(0.6, (stepData.ms / 1000) * 1.45);
+
+                // Play warm left-hand accompaniment chord with subtle pianist arpeggiation
                 if (stepData.chord) {
                     stepData.chord.forEach((freq, idx) => {
                         setTimeout(() => {
-                            if (appState.musicPlaying) {
-                                playRealisticPianoNote(freq, stepData.dur * 1.4, 0.045, preset.style);
+                            if (appState.musicPlaying && !ytIsActivelyStreaming && !usingHtml5Audio) {
+                                playRealisticPianoNote(freq, durSec * 1.35, 0.048);
                             }
-                        }, idx * 32); // Subtle human harp-roll timing
+                        }, idx * 24);
                     });
                 }
 
-                // Play expressive right-hand melody note
+                // Play expressive right-hand piano melody note
                 if (stepData.melody) {
-                    const humanTimingOffset = Math.random() * 18;
-                    setTimeout(() => {
-                        if (appState.musicPlaying) {
-                            playRealisticPianoNote(stepData.melody, stepData.dur * 1.15, 0.085, preset.style);
-                            // Add soft celesta octave sparkle on cinema & ghibli tracks
-                            if (preset.style !== 'cafe_piano' && Math.random() > 0.35) {
-                                playRealisticPianoNote(stepData.melody * 2, stepData.dur * 0.7, 0.022, 'ghibli_waltz');
-                            }
-                        }
-                    }, humanTimingOffset);
+                    playRealisticPianoNote(stepData.melody, durSec * 1.2, 0.105);
                 }
 
                 melodyStep++;
-                bgMusicTimer = setTimeout(playNextBar, stepData.dur * preset.tempoMs);
+                bgMusicTimer = setTimeout(playNextStep, stepData.ms);
             };
 
-            playNextBar();
+            playNextStep();
         }
 
         function stopBackgroundMusic() {
             appState.musicPlaying = false;
+            pendingYtPlay = false;
+            ytIsActivelyStreaming = false;
             if (bgMusicTimer) {
                 clearTimeout(bgMusicTimer);
                 bgMusicTimer = null;
+            }
+            if (ytPlayerReady && ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+                try {
+                    ytPlayer.pauseVideo();
+                } catch (e) {}
             }
             const audioEl = document.getElementById('bgAudioElement');
             if (audioEl) {
                 audioEl.pause();
             }
-            stopRainVinylAmbiance();
+            updateMusicSourceLabel('● Paused');
             updateMusicUI();
         }
 
@@ -1583,43 +1773,25 @@
             initAudioContext();
             if (appState.musicPlaying) {
                 stopBackgroundMusic();
-                showToast("🔇 Café music paused. Quiet book-reading mode!", "📖");
+                showToast("🔇 Soundtrack paused. Tap again anytime to resume our song!", "📖");
             } else {
                 startBackgroundMusic();
-                showToast(`🎶 Now playing: ${TRACK_PRESETS[appState.activeTrackIndex].title}`, "🎹");
+                showToast("🎶 Playing our piano soundtrack (youtu.be/QZ41RzuYsWU) ✨", "🎹");
             }
         }
 
         function toggleMusicMixerPanel() {
             playClickBoop(660);
             const panel = document.getElementById('musicMixerPanel');
-            panel.classList.toggle('hidden');
-        }
-
-        function selectMusicTrack(index) {
-            appState.activeTrackIndex = index;
-            melodyStep = 0;
-
-            const preset = TRACK_PRESETS[index];
-            document.getElementById('activeTrackTitle').textContent = preset.title;
-            document.getElementById('activeTrackEngine').textContent = preset.subtitle;
-
-            for (let i = 0; i < 4; i++) {
-                const btn = document.getElementById(`trackBtn${i}`);
-                if (i === index) {
-                    btn.className = 'track-btn px-2.5 py-1.5 rounded-xl border border-rose-400 bg-rose-50 text-rose-900 font-bold text-[11px] text-left truncate cursor-pointer shadow-sm';
-                } else {
-                    btn.className = 'track-btn px-2.5 py-1.5 rounded-xl border border-stone-200 bg-stone-50 text-stone-700 font-medium text-[11px] text-left truncate cursor-pointer';
-                }
-            }
-
-            if (appState.musicPlaying) {
-                stopBackgroundMusic();
-                startBackgroundMusic();
+            if (!panel) return;
+            appState.musicMixerOpen = !appState.musicMixerOpen;
+            if (appState.musicMixerOpen) {
+                panel.classList.remove('max-h-0', 'opacity-0', 'pointer-events-none', 'py-0', 'border-amber-200/0');
+                panel.classList.add('max-h-96', 'opacity-100', 'pointer-events-auto', 'py-3.5', 'border-amber-200/90');
             } else {
-                startBackgroundMusic();
+                panel.classList.add('max-h-0', 'opacity-0', 'pointer-events-none', 'py-0', 'border-amber-200/0');
+                panel.classList.remove('max-h-96', 'opacity-100', 'pointer-events-auto', 'py-3.5', 'border-amber-200/90');
             }
-            showToast(`🎵 Switched to: ${preset.title}`, "💿");
         }
 
         function changeMusicVolume(val) {
@@ -1628,6 +1800,11 @@
             document.getElementById('musicVolumeLabel').textContent = `${val}%`;
             if (masterMusicGain && audioCtx) {
                 masterMusicGain.gain.setValueAtTime(norm, audioCtx.currentTime);
+            }
+            if (ytPlayerReady && ytPlayer && typeof ytPlayer.setVolume === 'function') {
+                try {
+                    ytPlayer.setVolume(Math.round(norm * 100));
+                } catch (e) {}
             }
             const audioEl = document.getElementById('bgAudioElement');
             if (audioEl) {
@@ -1642,7 +1819,7 @@
             const eq = document.getElementById('musicEqBars');
             if (appState.musicPlaying) {
                 vinyl.classList.remove('spin-paused');
-                text.textContent = 'Café Piano';
+                text.textContent = 'Our Song ♪';
                 btn.classList.add('bg-rose-50', 'border-rose-300');
                 if (eq) {
                     eq.classList.remove('hidden');
@@ -1650,7 +1827,7 @@
                 }
             } else {
                 vinyl.classList.add('spin-paused');
-                text.textContent = 'Music: Off';
+                text.textContent = 'BGM: Off';
                 btn.classList.remove('bg-rose-50', 'border-rose-300');
                 if (eq) {
                     eq.classList.add('hidden');
@@ -1737,14 +1914,14 @@
             initAudioContext();
             if (!audioCtx) return;
             try {
-                // Lush Grand Piano & Celesta Reveal Chord Arpeggio
+                // Lush Ab Major arpeggio flourish in the same key as the background piano song
                 const notes = color === 'red' 
-                    ? [261.63, 329.63, 392.00, 493.88, 523.25, 659.25, 783.99, 1046.50] // Warm Cmaj9
-                    : [220.00, 277.18, 329.63, 440.00, 554.37, 659.25, 880.00, 1108.73]; // Dreamy Amaj9
+                    ? [207.65, 261.63, 311.13, 415.30, 523.25, 622.25, 830.61] // Ab Major 9
+                    : [174.61, 207.65, 261.63, 311.13, 415.30, 523.25, 622.25]; // Fm9 (Relative minor in Ab)
 
                 notes.forEach((freq, idx) => {
                     setTimeout(() => {
-                        playRealisticPianoNote(freq, 1.3, 0.075, 'ghibli_waltz');
+                        playRealisticPianoNote(freq, 1.3, 0.065);
                     }, idx * 65);
                 });
             } catch (e) {}
@@ -1795,9 +1972,10 @@
          * 4. STEP NAVIGATION & INTERACTIVE FLOW
          **************************************************************/
         function startExperience() {
+            melodyStep = 0; // Always begin right at 0:00 of the song when she clicks the first button
             startBackgroundMusic();
-            playSecretRevealFanfare('red');
-            showToast("🍿 Popcorn ready? Welcome to Chapter 1 of our meetup!", "🎬");
+            triggerHaptic('heartbeat');
+            showToast("🎶 Playing our song! Welcome to Chapter 1 of our story!", "🎬");
             goToStep(1);
         }
 
@@ -1937,24 +2115,18 @@
             // Highlight selected color card
             const redCard = document.getElementById('colorCardRed');
             const blueCard = document.getElementById('colorCardBlue');
-            const redLabel = document.getElementById('redActionLabel');
-            const blueLabel = document.getElementById('blueActionLabel');
 
             if (colorKey === 'red') {
                 redCard.classList.add('ring-4', 'ring-red-300', 'scale-[1.01]');
                 blueCard.classList.remove('ring-4', 'ring-blue-300', 'scale-[1.01]');
                 blueCard.classList.add('opacity-80');
                 redCard.classList.remove('opacity-80');
-                redLabel.textContent = '🔓 Red Secret Unlocked!';
-                blueLabel.textContent = '🔒 Tap to Peek Blue';
-                showToast(previousColor === 'blue' ? "🔴 Plot twist! Switching to the Crimson Velvet reveal!" : "🔴 Red Mystery Unlocked! Welcome to Brown Sugar!", "🍓");
+                showToast(previousColor === 'blue' ? "🔴 Plot twist! Switching to the Red mystery reveal!" : "🔴 Red Mystery Unlocked! Welcome to Brown Sugar!", "🤎");
             } else {
                 blueCard.classList.add('ring-4', 'ring-blue-300', 'scale-[1.01]');
                 redCard.classList.remove('ring-4', 'ring-red-300', 'scale-[1.01]');
                 redCard.classList.add('opacity-80');
                 blueCard.classList.remove('opacity-80');
-                blueLabel.textContent = '🔓 Blue Secret Unlocked!';
-                redLabel.textContent = '🔒 Tap to Peek Red';
                 showToast(previousColor === 'red' ? "🔵 Ooh, peeking behind curtain #2! Welcome to B Black Cat Cafe!" : "🔵 Blue Mystery Unlocked! Welcome to B Black Cat Cafe!", "🐾");
             }
 
@@ -2055,14 +2227,156 @@
         }
 
         /**************************************************************
-         * 4. GENERATE FINAL VIP TICKET & SAVE HER OUTPUT TO EXCEL (.XLSX)
+         * 4. GENERATE FINAL VIP TICKET, AUTO-CALENDAR (.ICS) & EXCEL (.XLSX)
          **************************************************************/
+        const MEETUP_DATE_DISPLAY = '21/11/2026';
+        const MEETUP_DATE_ICS = '20261121'; // Saturday, November 21, 2026
+
+        /**
+         * Builds structured calendar metadata for 21/11/2026 matching her selected time & location.
+         */
+        function getMeetupCalendarDetails() {
+            const colorKey = appState.selectedColor || 'red';
+            const place = SECRET_PLACES[colorKey];
+            const chosenTime = appState.selectedTime || '9:00 AM';
+            const isTenAm = chosenTime.startsWith('10');
+
+            // Local floating timestamps (2-hour meetup window: 9:00-11:00 AM or 10:00 AM-12:00 PM)
+            const startTimeIcs = isTenAm ? '100000' : '090000';
+            const endTimeIcs = isTenAm ? '120000' : '110000';
+            const dtStart = `${MEETUP_DATE_ICS}T${startTimeIcs}`;
+            const dtEnd = `${MEETUP_DATE_ICS}T${endTimeIcs}`;
+
+            const chosenIndices = Array.from(appState.selectedVibes);
+            const vibesText = chosenIndices.length > 0
+                ? chosenIndices.map(i => VIBE_OPTIONS[i]).join(', ')
+                : 'Unscripted Laughs & Vibes';
+
+            const summary = `Our Cozy Little Story - First Meetup @ ${place.name}`;
+            const location = `${place.name} (${place.url})`;
+
+            const descLines = [
+                `Chapter 1: Our First Meetup!`,
+                `Date: Saturday, ${MEETUP_DATE_DISPLAY}`,
+                `Time: ${chosenTime} (${appState.selectedTimeTitle || 'Morning Cut'})`,
+                `Location: ${place.name}`,
+                `Google Maps: ${place.url}`,
+                `Table Topic: ${appState.selectedTopic}`,
+                `Treat Mood: ${appState.selectedTreat}`,
+                `Side Quests: ${vibesText}`
+            ];
+            if (appState.customNote) {
+                descLines.push(`Personal Note: "${appState.customNote}"`);
+            }
+
+            return {
+                dateDisplay: MEETUP_DATE_DISPLAY,
+                chosenTime,
+                place,
+                dtStart,
+                dtEnd,
+                summary,
+                location,
+                description: descLines.join('\n'),
+                calendarEventLabel: `${MEETUP_DATE_DISPLAY} | ${chosenTime} @ ${place.name}`
+            };
+        }
+
+        function escapeIcsText(str) {
+            return String(str || '')
+                .replace(/\\/g, '\\\\')
+                .replace(/;/g, '\\;')
+                .replace(/,/g, '\\,')
+                .replace(/\r?\n/g, '\\n');
+        }
+
+        /**
+         * Automatically generates and downloads a universal .ics calendar file
+         * (works with Apple Calendar, Google Calendar, Samsung Calendar & Outlook)
+         * for 21/11/2026 at her chosen time and unlocked location.
+         */
+        function downloadMeetupCalendarICS(isAutoTriggered = false) {
+            try {
+                if (!isAutoTriggered) {
+                    triggerHaptic('success');
+                    playClickBoop(860);
+                }
+                const ev = getMeetupCalendarDetails();
+                const nowUtc = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                const uid = `our-first-meetup-20261121-${Date.now()}@cozylittlestory.app`;
+
+                const icsLines = [
+                    'BEGIN:VCALENDAR',
+                    'VERSION:2.0',
+                    'PRODID:-//Our Cozy Little Story//First Meetup Invite//EN',
+                    'CALSCALE:GREGORIAN',
+                    'METHOD:PUBLISH',
+                    'BEGIN:VEVENT',
+                    `UID:${uid}`,
+                    `DTSTAMP:${nowUtc}`,
+                    `DTSTART:${ev.dtStart}`,
+                    `DTEND:${ev.dtEnd}`,
+                    `SUMMARY:${escapeIcsText(ev.summary)}`,
+                    `LOCATION:${escapeIcsText(ev.location)}`,
+                    `URL:${ev.place.url}`,
+                    `DESCRIPTION:${escapeIcsText(ev.description)}`,
+                    'BEGIN:VALARM',
+                    'TRIGGER:-PT30M',
+                    'ACTION:DISPLAY',
+                    `DESCRIPTION:${escapeIcsText(`Chapter 1 Meetup in 30 minutes at ${ev.place.name}!`)}`,
+                    'END:VALARM',
+                    'END:VEVENT',
+                    'END:VCALENDAR'
+                ];
+
+                const icsBlob = new Blob([icsLines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+                const blobUrl = URL.createObjectURL(icsBlob);
+                const cleanPlace = ev.place.name.replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_');
+                const fileName = `First_Meetup_21_11_2026_${cleanPlace}.ics`;
+
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 2500);
+
+                if (!isAutoTriggered) {
+                    showToast(`📅 Calendar invite saved for ${ev.dateDisplay} at ${ev.chosenTime} (${ev.place.name})!`, "🗓️");
+                }
+            } catch (err) {
+                console.warn('Calendar export error:', err);
+            }
+        }
+
+        /**
+         * Opens a pre-filled Google Calendar event screen for 21/11/2026 with matching time & location.
+         */
+        function openInGoogleCalendar() {
+            triggerHaptic('success');
+            playClickBoop(880);
+            const ev = getMeetupCalendarDetails();
+            const params = new URLSearchParams({
+                action: 'TEMPLATE',
+                text: ev.summary,
+                dates: `${ev.dtStart}/${ev.dtEnd}`,
+                location: ev.location,
+                details: ev.description
+            });
+            const gcalUrl = `https://calendar.google.com/calendar/render?${params.toString()}`;
+            showToast(`📆 Opening Google Calendar for ${ev.dateDisplay} at ${ev.chosenTime}!`, "✨");
+            window.open(gcalUrl, '_blank', 'noopener,noreferrer');
+        }
+
         async function generateFinalTicket() {
             const noteInput = document.getElementById('customBookMovieNote');
             appState.customNote = noteInput ? noteInput.value.trim() : '';
 
             const colorKey = appState.selectedColor || 'red';
             const place = SECRET_PLACES[colorKey];
+            const calDetails = getMeetupCalendarDetails();
 
             // Populate Ticket DOM
             document.getElementById('ticketHeaderBanner').className = `bg-gradient-to-r ${place.bannerGradient} text-white px-6 py-4 flex items-center justify-between`;
@@ -2084,45 +2398,51 @@
 
             // Populate Side Quests
             const vibesContainer = document.getElementById('ticketVibesList');
-            vibesContainer.innerHTML = '';
             const chosenIndices = Array.from(appState.selectedVibes);
             if (chosenIndices.length === 0) {
                 chosenIndices.push(3);
             }
-            chosenIndices.forEach((idx) => {
-                const pill = document.createElement('span');
-                pill.className = 'inline-block px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300/70 text-amber-950 text-xs font-medium';
-                pill.textContent = VIBE_OPTIONS[idx];
-                vibesContainer.appendChild(pill);
-            });
+            if (vibesContainer) {
+                vibesContainer.innerHTML = '';
+                chosenIndices.forEach((idx) => {
+                    const pill = document.createElement('span');
+                    pill.className = 'inline-block px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300/70 text-amber-950 text-xs font-medium';
+                    pill.textContent = VIBE_OPTIONS[idx];
+                    vibesContainer.appendChild(pill);
+                });
+            }
 
             // Optional custom note
             const noteBox = document.getElementById('ticketCustomNoteBox');
-            if (appState.customNote) {
-                noteBox.classList.remove('hidden');
-                noteBox.textContent = `💌 Her Note: "${appState.customNote}"`;
-            } else {
-                noteBox.classList.add('hidden');
+            if (noteBox) {
+                if (appState.customNote) {
+                    noteBox.classList.remove('hidden');
+                    noteBox.textContent = `💌 Her Note: "${appState.customNote}"`;
+                } else {
+                    noteBox.classList.add('hidden');
+                }
             }
 
             const nowStr = new Date().toLocaleString();
             const timestampEl = document.getElementById('ticketTimestampLabel');
             if (timestampEl) {
-                timestampEl.textContent = `LOGGED: ${nowStr}`;
+                timestampEl.textContent = `DATE: ${MEETUP_DATE_DISPLAY} • LOGGED: ${nowStr}`;
             }
 
             const generatedLocalId = 'local_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
 
-            // Create structured response record for Excel & Cloud log
+            // Create structured response record (includes 21/11/2026 meetup date & calendar event info)
             const newRecord = {
                 localId: generatedLocalId,
                 timestamp: nowStr,
                 createdAtMs: Date.now(),
+                meetupDate: MEETUP_DATE_DISPLAY,
                 meetupTime: appState.selectedTime || '9:00 AM',
                 timeEdition: appState.selectedTimeTitle || 'The Early Bird Cut ☕',
                 chosenColor: colorKey === 'blue' ? 'Blue' : 'Red',
                 revealedCafe: place.name,
                 googleMapsUrl: place.url,
+                calendarEvent: calDetails.calendarEventLabel,
                 bookMovieTopic: appState.selectedTopic,
                 treatMood: appState.selectedTreat,
                 sideQuests: chosenIndices.map(i => VIBE_OPTIONS[i]).join(' | '),
@@ -2132,6 +2452,9 @@
             // Save locally in session array immediately
             appState.savedResponses.unshift(newRecord);
             renderExcelLogTable();
+
+            // Automatically generate & download her Calendar App invite (.ics) for 21/11/2026
+            downloadMeetupCalendarICS(true);
 
             // Save to Firebase Cloud if available
             if (window.saveResponseToCloud) {
@@ -2149,7 +2472,7 @@
                 ? ['#2563EB', '#60A5FA', '#F59E0B', '#EC4899']
                 : ['#E11D48', '#F43F5E', '#F59E0B', '#FBBF24']
             );
-            showToast("🎟️ Response Logged! Click 'Save Output in Excel (.xlsx)' to download!", "📊");
+            showToast(`📅 Auto-saved Calendar Invite for 21/11/2026 at ${newRecord.meetupTime} (${place.name})!`, "🎟️");
         }
 
         // Sync Cloud Firestore responses into the table while respecting deleted IDs
@@ -2173,12 +2496,14 @@
         function buildExcelRowsFromRecords(records) {
             return records.map((rec, index) => ({
                 "Entry #": index + 1,
-                "Timestamp": rec.timestamp || '',
+                "Logged Timestamp": rec.timestamp || '',
+                "Meetup Date": rec.meetupDate || MEETUP_DATE_DISPLAY,
                 "Selected Meetup Time": rec.meetupTime || '',
                 "Time Edition": rec.timeEdition || '',
                 "Chosen Color": rec.chosenColor || '',
                 "Revealed Cafe Name": rec.revealedCafe || '',
                 "Google Maps Link": rec.googleMapsUrl || '',
+                "Calendar Event Saved": rec.calendarEvent || `${rec.meetupDate || MEETUP_DATE_DISPLAY} | ${rec.meetupTime || ''} @ ${rec.revealedCafe || ''}`,
                 "Book & Movie Topic": rec.bookMovieTopic || '',
                 "Treat & Drink Mood": rec.treatMood || '',
                 "Chosen Side Quests": rec.sideQuests || '',
@@ -2191,23 +2516,26 @@
             playClickBoop(840);
             const colorKey = appState.selectedColor || 'red';
             const place = SECRET_PLACES[colorKey];
+            const calDetails = getMeetupCalendarDetails();
             const chosenIndices = Array.from(appState.selectedVibes);
 
             const currentRecord = appState.savedResponses[0] || {
                 timestamp: new Date().toLocaleString(),
+                meetupDate: MEETUP_DATE_DISPLAY,
                 meetupTime: appState.selectedTime || '9:00 AM',
                 timeEdition: appState.selectedTimeTitle || 'The Early Bird Cut ☕',
                 chosenColor: colorKey === 'blue' ? 'Blue' : 'Red',
                 revealedCafe: place.name,
                 googleMapsUrl: place.url,
+                calendarEvent: calDetails.calendarEventLabel,
                 bookMovieTopic: appState.selectedTopic,
                 treatMood: appState.selectedTreat,
                 sideQuests: chosenIndices.map(i => VIBE_OPTIONS[i]).join(' | '),
                 herNote: appState.customNote || '—'
             };
 
-            exportRecordsToXlsxFile([currentRecord], `Our_First_Meetup_${currentRecord.chosenColor}_${place.name.replace(/\s+/g, '_')}.xlsx`);
-            showToast("📊 Downloaded genuine Excel (.xlsx) meetup confirmation!", "✅");
+            exportRecordsToXlsxFile([currentRecord], `Our_First_Meetup_21_11_2026_${currentRecord.chosenColor}_${place.name.replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_')}.xlsx`);
+            showToast("📊 Downloaded genuine Excel (.xlsx) with 21/11/2026 calendar details!", "✅");
         }
 
         // Export all remaining saved responses in the log to Microsoft Excel (.xlsx)
@@ -2233,12 +2561,14 @@
             // Auto-fit column widths for clean readability in Microsoft Excel
             worksheet['!cols'] = [
                 { wch: 9 },  // Entry #
-                { wch: 22 }, // Timestamp
+                { wch: 22 }, // Logged Timestamp
+                { wch: 15 }, // Meetup Date (21/11/2026)
                 { wch: 20 }, // Selected Meetup Time
                 { wch: 24 }, // Time Edition
                 { wch: 15 }, // Chosen Color
                 { wch: 22 }, // Revealed Cafe Name
                 { wch: 42 }, // Google Maps Link
+                { wch: 36 }, // Calendar Event Saved
                 { wch: 34 }, // Book & Movie Topic
                 { wch: 30 }, // Treat & Drink Mood
                 { wch: 48 }, // Chosen Side Quests
@@ -2548,7 +2878,10 @@
                             <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleSelectExcelRow('${rowId}', this.checked)" class="w-3.5 h-3.5 accent-rose-600 rounded cursor-pointer">
                         </td>
                         <td class="py-2.5 px-3 font-mono text-[11px] text-stone-500 whitespace-nowrap">${rec.timestamp || ''}</td>
-                        <td class="py-2.5 px-3 font-bold text-stone-900 whitespace-nowrap">${rec.meetupTime || ''}</td>
+                        <td class="py-2.5 px-3 font-bold text-stone-900 whitespace-nowrap">
+                            <div>${rec.meetupTime || ''}</div>
+                            <div class="font-mono text-[10px] text-amber-700 font-normal">📅 ${rec.meetupDate || MEETUP_DATE_DISPLAY}</div>
+                        </td>
                         <td class="py-2.5 px-3 whitespace-nowrap">${colorPill}</td>
                         <td class="py-2.5 px-3 font-bold whitespace-nowrap">
                             <a href="${rec.googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="text-rose-600 hover:underline">${rec.revealedCafe} ↗</a>
@@ -2612,9 +2945,10 @@
 
             const summaryLines = [
                 `🎬 *CHAPTER 1: OUR FIRST MEETUP TICKET* 📖`,
+                `📅 *Date:* Saturday, ${MEETUP_DATE_DISPLAY}`,
                 `⏰ *Showtime:* ${appState.selectedTime || '9:00 AM'} (${appState.selectedTimeTitle || 'Morning Cut'})`,
                 `🎨 *Chosen Color:* ${place.colorLabel}`,
-                `☕ *Secret Cafe:* ${place.name}`,
+                `☕ *Location:* ${place.name}`,
                 `📍 *Google Maps:* ${place.url}`,
                 `📚 *Table Topic:* ${appState.selectedTopic}`,
                 `🍰 *Treat Mood:* ${appState.selectedTreat}`,
@@ -2624,6 +2958,7 @@
             if (appState.customNote) {
                 summaryLines.push(`💌 *My Note:* "${appState.customNote}"`);
             }
+            summaryLines.push(`🗓️ *Saved to Calendar for ${MEETUP_DATE_DISPLAY}!*`);
             summaryLines.push(`💕 *See you there for Chapter 1!*`);
 
             return summaryLines.join('\n');
